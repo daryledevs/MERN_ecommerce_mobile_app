@@ -1,16 +1,15 @@
-import { StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-
-const Stack = createStackNavigator();
+// component
+import Header from './src/shared/Header';
+import MainNavigation from './src/navigation/MainNavigation';
 
 const App = () => {
   return (
     <NavigationContainer>
-      <View>
-        <Text>Hello World</Text>
-      </View>
+      <Header/>
+      <MainNavigation/>
     </NavigationContainer>
   );
 };
