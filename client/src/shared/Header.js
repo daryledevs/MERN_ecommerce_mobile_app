@@ -4,7 +4,7 @@ import logo from '../asset/image/logo.png'
 const Header = () => {
   return (
     <SafeAreaView style={styles.header}>
-      <Image source={logo} resizeMode="contain" style={{width: 100, height: 100}} />
+      <Image source={logo} resizeMode="contain" style={{width: 90, height: 90}} />
     </SafeAreaView>
   );
 };
@@ -15,7 +15,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignContent: 'center',
     justifyContent: 'center',
-    paddingVertical: 10,
   },
 });
 
