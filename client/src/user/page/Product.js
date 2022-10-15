@@ -87,7 +87,10 @@ const Product = () => {
   };
 
   return (
-    <View style={{flex: 1}}>
+    <ScrollView
+      contentContainerStyle={showSearchList ? {height: '100%'} : null}
+      keyboardShouldPersistTaps="always"
+      nestedScrollEnabled={true}>
       <View style={styles.searchbarContainer}>
         <TextInput
           placeholder="Search"
@@ -99,7 +102,10 @@ const Product = () => {
       </View>
 
       {showSearchList ? (
-        <ScrollView style={{flex: 2}}>
+        <ScrollView
+          nestedScrollEnabled={true}
+          scrollEnabled={true}
+          keyboardShouldPersistTaps="always">
           {search.length === 0 || noSearchProduct ? (
             <EmptyListMessage />
           ) : (
@@ -121,7 +127,7 @@ const Product = () => {
           </View>
         </View>
       )}
-    </View>
+    </ScrollView>
   );
 };
 
