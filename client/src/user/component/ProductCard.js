@@ -1,11 +1,14 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
 import placeholder from '../../asset/image/placeholder.png';
+import { useNavigation } from '@react-navigation/native';
 
 const ProductCard = ({ product }) => {
-
+  const navigation = useNavigation();
   return (
-    <TouchableOpacity style={styles.productContainer}>
+    <TouchableOpacity
+      style={styles.productContainer}
+      onPress={() => navigation.navigate("Product Detail", {product})}>
       <View style={styles.productDetails}>
         <Image source={placeholder} style={styles.productImage} />
         <Text style={styles.name}>{product.name}</Text>
@@ -17,33 +20,31 @@ const ProductCard = ({ product }) => {
 
 export default ProductCard
 
-// color pallette
-// #3b1448 
-// #ff603e 
-// #02d6c2
-// #866f8f
-
 const styles = StyleSheet.create({
   productContainer: {
-    // flex: 1,
-    borderWidth: 1,
     width: '50%',
     height: 200,
     backgroundColor: 'white',
     borderRadius: 10,
+    elevation: 10,
+    marginVertical: 5
   },
+
   productDetails: {
     width: '80%',
     alignItems: 'center',
     alignSelf: 'center',
   },
+
   productImage: {
     width: '100%',
     height: 100,
   },
+
   name: {
     fontWeight: 'bold',
   },
+
   price: {
     fontWeight: 'bold',
     marginTop: 'auto',
