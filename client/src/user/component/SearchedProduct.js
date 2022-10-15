@@ -9,7 +9,7 @@ const SearchedProducts = props => {
   return (
     <TouchableOpacity
       style={styles.container}
-      onPress={() => navigation.navigate('Product Detail', {item: item})}>
+      onPress={() => navigation.navigate('Product Detail', {product: item})}>
       <Image
         style={styles.image}
         source={placeholder}
