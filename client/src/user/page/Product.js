@@ -2,17 +2,26 @@ import {
   StyleSheet,
   View,
   Keyboard,
-  Text
+  Text,
+  Modal,
+  TouchableOpacity,
+  Image,
+  FlatList
 } from 'react-native';
-import React, { useState, useEffect, useRef } from 'react';
-import ProductCard from '../component/ProductCard';
-import Banner from '../../shared/Banner';
 import { ScrollView, TextInput, } from 'react-native-gesture-handler';
+import React, { useState, useEffect, useRef } from 'react';
+// asset
+import FilterIcon from '../../asset/image/filter-v1.png';
+// component
+import Banner from '../../shared/Banner';
+import ProductCard from '../component/ProductCard';
 import SearchedProducts from '../component/SearchedProduct';
 
+const categories = require("../../asset/data/categories.json");
 const data = require('../../asset/data/products.json');
 
 const Product = () => {
+  // Search
   let searchRef = useRef(null);
   const [basedData, setBasedData] = useState([]);
   const [products, setProducts] = useState([]);
@@ -20,10 +29,16 @@ const Product = () => {
   const [searchProduct, setSearchProduct] = useState();
   const [showSearchList, setShowSearchList] = useState(false);
   const [noSearchProduct, setNoSearchProduct] = useState(false);
-  
+  // category
+  const chosenCategory = useRef([]);
+  const [category, setCategory] = useState([]);
+  const [triggerFilter, setTriggerFilter] = useState(false);
+  const [noCategoryFound, setNoCategoryFound] = useState(false);
+
   useEffect(() => {
     setProducts(data);
     setBasedData(data);
+    setCategory(categories);
   }, []);
 
   useEffect(() => {
@@ -68,6 +83,65 @@ const Product = () => {
     };
   }, []);
 
+  const categoryItem = (item_name, item_id) => {
+    if (
+      !chosenCategory.current.some(
+        element => element.categoryName === item_name,
+      )
+    ) {
+      let prev_values = chosenCategory.current;
+      prev_values = [
+        ...prev_values,
+        {categoryName: item_name, categoryId: item_id},
+      ];
+      chosenCategory.current = [...prev_values];
+    } else {
+      const prev_values = chosenCategory.current.filter(
+        chosen => chosen.categoryName !== item_name,
+      );
+      chosenCategory.current = [...prev_values];
+      if (chosenCategory.current.length === 0) setNoCategoryFound(false);
+    }
+
+    if (chosenCategory.current.length === 0) return setProducts(data);
+
+    const relatedCategory = basedData.filter(product =>
+      chosenCategory.current.some(
+        ({categoryId}) => categoryId === product.category.$oid,
+      ),
+    );
+
+    if (relatedCategory.length !== 0) setNoCategoryFound(false);
+    if (relatedCategory.length === 0) setNoCategoryFound(true);
+    setProducts(relatedCategory);
+  };
+
+  const FilterModal = () => {
+    return (
+      <Modal transparent={true} visible={triggerFilter} animationType="fade">
+        <View style={modalStyle.modalBackground}>
+          <View style={modalStyle.modalContainer}>
+            <Text>Categories</Text>
+            <TouchableOpacity onPress={() => setTriggerFilter(!triggerFilter)}>
+              <Text>Close</Text>
+            </TouchableOpacity>
+            <FlatList
+              data={category}
+              keyExtractor={item => '_' + item._id.$oid}
+              renderItem={({item}) => (
+                <TouchableOpacity
+                  onPress={() => categoryItem(item.name, item._id.$oid)}
+                  style={{borderWidth: 1, marginBottom: 5}}>
+                  <Text>{item.name}</Text>
+                </TouchableOpacity>
+              )}
+            />
+          </View>
+        </View>
+      </Modal>
+    );
+  };
+
   const EmptyListMessage = () => {
     return (
       <View>
@@ -91,6 +165,8 @@ const Product = () => {
       contentContainerStyle={showSearchList ? {height: '100%'} : null}
       keyboardShouldPersistTaps="always"
       nestedScrollEnabled={true}>
+      <FilterModal />
+
       <View style={styles.searchbarContainer}>
         <TextInput
           placeholder="Search"
@@ -99,6 +175,12 @@ const Product = () => {
           value={search}
           ref={reference => (searchRef.current = reference)}
         />
+
+        <TouchableOpacity
+          style={{marginHorizontal: '2%'}}
+          onPress={() => setTriggerFilter(!triggerFilter)}>
+          <Image source={FilterIcon} style={{width: 25, height: 25}} />
+        </TouchableOpacity>
       </View>
 
       {showSearchList ? (
@@ -115,17 +197,23 @@ const Product = () => {
           )}
         </ScrollView>
       ) : (
-        <View>
+        <ScrollView>
           <Banner />
-          <View
-            contentContainerStyle={{
-              backgroundColor: 'gainsboro',
-            }}>
-            {products.map(product => (
-              <ProductCard key={product._id.$oid} product={product} />
-            ))}
-          </View>
-        </View>
+          {noCategoryFound ? (
+            <Text>No item for this category.</Text>
+          ) : (
+            <View
+              style={{
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+                backgroundColor: 'gainsboro',
+              }}>
+              {products.map(product => (
+                <ProductCard key={product._id.$oid} product={product} />
+              ))}
+            </View>
+          )}
+        </ScrollView>
       )}
     </ScrollView>
   );
@@ -142,10 +230,26 @@ const styles = StyleSheet.create({
   },
 
   searchbar: {
-    width: '95%',
+    width: '87%',
     height: 40,
     borderRadius: 200,
     backgroundColor: '#ccc',
     marginLeft: '2%',
   },
 });
+
+const modalStyle = StyleSheet.create({
+  modalBackground: {
+    alignItems: 'flex-end',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    width: '100%',
+    height: '100%',
+  },
+
+  modalContainer: {
+    width: '70%',
+    height: '100%',
+    backgroundColor: 'white',
+  },
+});
+
