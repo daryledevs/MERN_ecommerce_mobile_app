@@ -1,13 +1,16 @@
 import React from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeNavigator from './Home';
 import CartNavigator from './Cart';
+import { useSelector } from 'react-redux';
+import { cartData } from '../redux/reducer/Cart';
 
 const Tab = createBottomTabNavigator();
 
 const MainNavigation = () => {
+  const cart = useSelector(cartData);
   return (
     <Tab.Navigator
       initialRouteName="Home"
@@ -47,6 +50,9 @@ const MainNavigation = () => {
                 color={color}
                 size={24}
               />
+              {cart.length !== 0 ? (
+                <Text style={styles.countCartItems}>{cart.length}</Text>
+              ) : null}
             </View>
           ),
         }}
@@ -70,3 +76,17 @@ const MainNavigation = () => {
 };
 
 export default MainNavigation;
+
+const styles = StyleSheet.create({
+  countCartItems: {
+    position: 'absolute',
+    zIndex: 1,
+    left: 15,
+    top: -4,
+    width: 19,
+    textAlign: 'center',
+    borderRadius: 100,
+    color: 'white',
+    backgroundColor: 'red',
+  },
+});
