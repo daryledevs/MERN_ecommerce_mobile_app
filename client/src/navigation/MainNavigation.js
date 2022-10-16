@@ -3,6 +3,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import { StyleSheet, View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeNavigator from './Home';
+import CartNavigator from './Cart';
 
 const Tab = createBottomTabNavigator();
 
@@ -36,7 +37,7 @@ const MainNavigation = () => {
       />
       <Tab.Screen
         name="Cart"
-        component={HomeNavigator}
+        component={CartNavigator}
         options={{
           tabBarIcon: ({color}) => (
             <View>
@@ -51,7 +52,7 @@ const MainNavigation = () => {
         }}
       />
       <Tab.Screen
-        name="User"
+        name="Me"
         component={HomeNavigator}
         options={{
           tabBarIcon: ({color}) => (
