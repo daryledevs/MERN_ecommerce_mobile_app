@@ -16,7 +16,7 @@ const SearchedProducts = props => {
       />
       <View>
         <Text style={styles.name}>{item.name}</Text>
-        <Text style={styles.name}>{item.description}</Text>
+        <Text style={styles.name}>{item.brand}</Text>
       </View>
     </TouchableOpacity>
   );
