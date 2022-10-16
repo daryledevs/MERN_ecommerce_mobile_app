@@ -1,8 +1,12 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image, Button } from 'react-native';
 import placeholder from '../../asset/image/placeholder.png';
+import { useDispatch } from 'react-redux';
+import { addToCart } from '../../redux/reducer/Cart';
+
 const ProductDetail = ({ route }) => {
   const { product } = route.params;
+  const dispatch = useDispatch();
   return (
     <View style={styles.container}>
       <Image source={placeholder} style={styles.productImage} />
@@ -17,8 +21,8 @@ const ProductDetail = ({ route }) => {
       </View>
       <Text>Ratings: {product.rating}</Text>
       <View style={styles.buttonContainer}>
-        <Button title="Add to Cart" />
-        <Button title="Buy Now" />
+        <Button title="Add to Cart" onPress={() => dispatch(addToCart(product))} />
+        <Button title="Buy Now" onPress={() => dispatch(addToCart(product))} />
       </View>
     </View>
   );
