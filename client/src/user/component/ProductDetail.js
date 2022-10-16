@@ -19,9 +19,16 @@ const ProductDetail = ({ route }) => {
         <Text style={styles.title}>Description</Text>
         <Text>{product.description}</Text>
       </View>
-      <Text>Ratings: {product.rating}</Text>
+      <Text>
+        {product.rating === null
+          ? 'No ratings yet'
+          : `Ratings:  ${product.rating}`}
+      </Text>
       <View style={styles.buttonContainer}>
-        <Button title="Add to Cart" onPress={() => dispatch(addToCart(product))} />
+        <Button
+          title="Add to Cart"
+          onPress={() => dispatch(addToCart(product))}
+        />
         <Button title="Buy Now" onPress={() => dispatch(addToCart(product))} />
       </View>
     </View>
