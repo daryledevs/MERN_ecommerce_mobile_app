@@ -9,12 +9,17 @@ const app = express();
 app.use(bodyParser.json());
 app.use(morgan("tiny"));
 
-const baseURL = process.env.API_URL;
+const API = process.env.API_URL;
 const PORT = process.env.PORT || 5000;
+const product = require(".//src/route/Product");
+const category = require("./src/route/Category");
 
-app.get(`${baseURL}/hello`, (req, res) => {
+app.get(`${API}/hello`, (req, res) => {
   res.send("Hello world");
 });
+
+app.use(`${API}/products`, product);
+app.use(`${API}/categories`, category);
 
 // database
 mongoose.connect(process.env.CONNECTION_URL, {
