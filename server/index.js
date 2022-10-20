@@ -12,7 +12,7 @@ app.use(morgan("tiny"));
 const API = process.env.API_URL;
 const PORT = process.env.PORT || 5000;
 
-const product = require(".//src/route/Product");
+const product = require("./src/route/Product");
 const category = require("./src/route/Category");
 const user = require("./src/route/User");
 
