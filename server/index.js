@@ -11,8 +11,10 @@ app.use(morgan("tiny"));
 
 const API = process.env.API_URL;
 const PORT = process.env.PORT || 5000;
+
 const product = require(".//src/route/Product");
 const category = require("./src/route/Category");
+const user = require("./src/route/User");
 
 app.get(`${API}/hello`, (req, res) => {
   res.send("Hello world");
@@ -20,6 +22,7 @@ app.get(`${API}/hello`, (req, res) => {
 
 app.use(`${API}/products`, product);
 app.use(`${API}/categories`, category);
+app.use(`${API}/users`, user);
 
 // database
 mongoose.connect(process.env.CONNECTION_URL, {
