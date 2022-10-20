@@ -1,18 +1,21 @@
 const mongoose = require("mongoose");
 
 const categorySchema = mongoose.Schema({
-  // id: String,
   name: {
     type: String,
     required: true,
   },
-  color: {
+
+  description:{
     type: String,
+    default: "",
   },
-  icon: {
-    type: String,
-  },
-  // image: {},
+  
+  // subCategory: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: "SubCategory",
+  //   required: true
+  // },
 });
 
 exports.Category = mongoose.model("Category", categorySchema);
