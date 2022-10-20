@@ -1,10 +1,13 @@
 import React from 'react';
-import Icon from 'react-native-vector-icons/FontAwesome5';
 import { StyleSheet, View, Text } from 'react-native';
+// packages
+import Icon from 'react-native-vector-icons/FontAwesome5';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useSelector } from 'react-redux';
+// components
 import HomeNavigator from './Home';
 import CartNavigator from './Cart';
-import { useSelector } from 'react-redux';
+import UserProfile from '../user/page/UserProfile';
 import { cartData } from '../redux/reducer/Cart';
 
 const Tab = createBottomTabNavigator();
@@ -59,7 +62,7 @@ const MainNavigation = () => {
       />
       <Tab.Screen
         name="Me"
-        component={HomeNavigator}
+        component={UserProfile}
         options={{
           tabBarIcon: ({color}) => (
             <Icon
