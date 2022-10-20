@@ -9,6 +9,17 @@ const getAllUser = async (req, res) => {
   res.status(200).send(userList);
 };
 
+const getNumberOfUser = async (req, res) => {
+  const userCount = await User.estimatedDocumentCount();
+
+  if (!userCount) {
+    res.status(500).json({ success: false });
+  }
+  res.send({
+    userCount: userCount,
+  });
+};
+
 const createUser = async (req, res) => {
   const body = req.body;
   const userPassword = req.body.password;
@@ -53,4 +64,5 @@ const userLogIn = async (req, res) => {
   }
 }
 
-module.exports = { getAllUser, createUser, userLogIn };
+
+module.exports = { getAllUser, createUser, userLogIn, getNumberOfUser };
