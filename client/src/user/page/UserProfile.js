@@ -1,8 +1,11 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { StyleSheet, Text, View, Image, Button } from 'react-native';
+import { useDispatch } from 'react-redux';
 import user_picture from '../../asset/image/user_placeholder.png';
+import { userLogout } from '../../redux/reducer/User';
 
 const UserProfile = () => {
+  const dispatch = useDispatch();
   return (
     <View style={{flex: 1, backgroundColor: 'white'}}>
       <View style={styles.email_name_container}>
@@ -14,6 +17,7 @@ const UserProfile = () => {
       <Text>Phone</Text>
       <Text>Email</Text>
       <Text>Street, Apartment, City, Country</Text>
+      <Button title="Logout" onPress={() => dispatch(userLogout())} />
     </View>
   );
 }
