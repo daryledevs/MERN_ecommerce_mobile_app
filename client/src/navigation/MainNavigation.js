@@ -11,6 +11,7 @@ import AuthNavigator from './AuthNavigator';
 import { getUserInfoByToken } from '../redux/action/User';
 import UserProfile from '../user/page/UserProfile';
 import { cartData } from '../redux/reducer/Cart';
+import Header from '../shared/Header';
 import HomeNavigator from './Home';
 import CartNavigator from './Cart';
 
@@ -52,66 +53,69 @@ const MainNavigation = () => {
   return (
     <>
       {isToken ? (
-        <Tab.Navigator
-          initialRouteName="Home"
-          screenOptions={{
-            KeyboardHidesTabBar: true,
-            showLabel: false,
-            activeTinColor: '#e91e63',
-            headerShown: false,
-            tabBarStyle: {height: 60},
-            tabBarLabelStyle: {
-              fontSize: 13,
-            },
-          }}>
-          <Tab.Screen
-            name="Home"
-            component={HomeNavigator}
-            options={{
-              tabBarIcon: ({color}) => (
-                <Icon
-                  name="home"
-                  style={{position: 'relative'}}
-                  color={color}
-                  size={24}
-                />
-              ),
-            }}
-          />
-          <Tab.Screen
-            name="Cart"
-            component={CartNavigator}
-            options={{
-              tabBarIcon: ({color}) => (
-                <View>
+        <>
+          <Header/>
+          <Tab.Navigator
+            initialRouteName="Home"
+            screenOptions={{
+              KeyboardHidesTabBar: true,
+              showLabel: false,
+              activeTinColor: '#e91e63',
+              headerShown: false,
+              tabBarStyle: {height: 60},
+              tabBarLabelStyle: {
+                fontSize: 13,
+              },
+            }}>
+            <Tab.Screen
+              name="Home"
+              component={HomeNavigator}
+              options={{
+                tabBarIcon: ({color}) => (
                   <Icon
-                    name="shopping-cart"
+                    name="home"
                     style={{position: 'relative'}}
                     color={color}
                     size={24}
                   />
-                  {cart.length !== 0 ? (
-                    <Text style={styles.countCartItems}>{cart.length}</Text>
-                  ) : null}
-                </View>
-              ),
-            }}
-          />
-          <Tab.Screen
-            name="Me"
-            component={UserProfile}
-            options={{
-              tabBarIcon: ({color}) => (
-                <Icon
-                  name="user-alt"
-                  style={{position: 'relative'}}
-                  color={color}
-                  size={24}
-                />
-              ),
-            }}
-          />
-        </Tab.Navigator>
+                ),
+              }}
+            />
+            <Tab.Screen
+              name="Cart"
+              component={CartNavigator}
+              options={{
+                tabBarIcon: ({color}) => (
+                  <View>
+                    <Icon
+                      name="shopping-cart"
+                      style={{position: 'relative'}}
+                      color={color}
+                      size={24}
+                    />
+                    {cart.length !== 0 ? (
+                      <Text style={styles.countCartItems}>{cart.length}</Text>
+                    ) : null}
+                  </View>
+                ),
+              }}
+            />
+            <Tab.Screen
+              name="Me"
+              component={UserProfile}
+              options={{
+                tabBarIcon: ({color}) => (
+                  <Icon
+                    name="user-alt"
+                    style={{position: 'relative'}}
+                    color={color}
+                    size={24}
+                  />
+                ),
+              }}
+            />
+          </Tab.Navigator>
+        </>
       ) : (
         <AuthNavigator />
       )}
