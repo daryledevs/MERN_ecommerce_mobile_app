@@ -9,6 +9,18 @@ const getAllUser = async (req, res) => {
   res.status(200).send(userList);
 };
 
+const getUserByToken = async (req, res) => {
+  const secret = process.env.JWT_SECRET;
+  const token = req.headers.authorization.replace("Bearer ", "");
+  const decode = jwt.verify(token, secret);
+  const { userId, isAdmin, exp } = decode;
+  if (Date.now() >= exp * 1000)
+    return res.status(404).send("Token is expired.");
+  if (!userId) return res.status(404).send("User ID not found.");
+  const userList = await User.findById(userId);
+  res.status(200).send(userList);
+};
+
 const getNumberOfUser = async (req, res) => {
   const userCount = await User.estimatedDocumentCount();
 
@@ -64,5 +76,10 @@ const userLogIn = async (req, res) => {
   }
 }
 
-
-module.exports = { getAllUser, createUser, userLogIn, getNumberOfUser };
+module.exports = {
+  getAllUser,
+  createUser,
+  userLogIn,
+  getNumberOfUser,
+  getUserByToken,
+};
