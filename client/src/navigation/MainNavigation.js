@@ -7,11 +7,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 // components
 import { Token, Loading, LoginTriggers, NoTokenLoading, tokenIsNull } from '../redux/reducer/User';
-import AuthNavigator from './AuthNavigator';
+import { getAllProducts } from '../redux/action/Product';
 import FirstBootLoading from '../shared/FirstBootLoading';
 import { getUserInfoByToken } from '../redux/action/User';
 import UserProfile from '../user/page/UserProfile';
 import { cartData } from '../redux/reducer/Cart';
+import AuthNavigator from './AuthNavigator';
 import Header from '../shared/Header';
 import HomeNavigator from './Home';
 import CartNavigator from './Cart';
@@ -24,6 +25,9 @@ const MainNavigation = () => {
   const loginTriggers = useSelector(LoginTriggers);
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    dispatch(getAllProducts());
+  }, []);
   
    useEffect(() => {
     if (loginTriggers) {
