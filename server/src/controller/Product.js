@@ -2,7 +2,7 @@ const { Product } = require("../model/Product");
 const { Category } = require("../model/Category");
 
 const getAllProducts = async (req, res) => {
-  const productList = await Product.find();
+  const productList = await Product.find().populate("category");
   if(!productList) return res.status(500).json({ success: false });
   res.status(200).send(productList);
 }
