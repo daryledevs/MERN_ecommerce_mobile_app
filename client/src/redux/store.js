@@ -1,14 +1,12 @@
-import {configureStore, applyMiddleware, compose} from '@reduxjs/toolkit';
-import thunk from 'redux-thunk';
-import cartReducer from './reducer/Cart';
+import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
+import cartReducer from "./reducer/Cart";
+import userReducer from './reducer/User';
 
-const store = configureStore(
-  {
-    reducer: {
-      cart: cartReducer,
-    },
+const store = configureStore({
+  reducer: {
+    cart: cartReducer,
+    user: userReducer,
   },
-  compose(applyMiddleware(thunk)),
-);
+});
 
 export default store;
