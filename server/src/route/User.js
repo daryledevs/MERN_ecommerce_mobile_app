@@ -5,10 +5,12 @@ const {
   createUser,
   userLogIn,
   getNumberOfUser,
+  getUserByToken,
 } = require("../controller/User");
 
 router.get("/", getAllUser);
 router.get("/get/count", getNumberOfUser);
+router.get("/token", getUserByToken);
 router.post("/register", createUser);
 router.post("/login", userLogIn);
 
