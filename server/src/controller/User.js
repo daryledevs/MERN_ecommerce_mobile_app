@@ -12,11 +12,18 @@ const getAllUser = async (req, res) => {
 const getUserByToken = async (req, res) => {
   const secret = process.env.JWT_SECRET;
   const token = req.headers.authorization.replace("Bearer ", "");
-  const decode = jwt.verify(token, secret);
-  const { userId, isAdmin, exp } = decode;
-  if (Date.now() >= exp * 1000)
-    return res.status(404).send("Token is expired.");
+  const { userId, isAdmin, error } =
+    jwt.verify(token, secret, (error, decoded) => {
+      if (error?.name) {
+        res.status(404).send("Token is expired.");
+        return;
+      }
+      return decoded;
+    }) || { error: "jwt expired" }; // solve to error if destructuring the property is undefined
+  
+  if(error === "jwt expired") return;
   if (!userId) return res.status(404).send("User ID not found.");
+
   const userList = await User.findById(userId);
   res.status(200).send(userList);
 };
