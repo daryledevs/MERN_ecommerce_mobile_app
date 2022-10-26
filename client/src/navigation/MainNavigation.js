@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 // components
 import { Token, Loading, LoginTriggers, NoTokenLoading, tokenIsNull } from '../redux/reducer/User';
-import { getAllProducts } from '../redux/action/Product';
+import { getAllCategories, getAllProducts } from '../redux/action/Product';
 import FirstBootLoading from '../shared/FirstBootLoading';
 import { getUserInfoByToken } from '../redux/action/User';
 import UserProfile from '../user/page/UserProfile';
@@ -27,6 +27,7 @@ const MainNavigation = () => {
 
   useEffect(() => {
     dispatch(getAllProducts());
+    dispatch(getAllCategories());
   }, []);
   
    useEffect(() => {
