@@ -6,7 +6,7 @@ import {
   Modal,
   TouchableOpacity,
   Image,
-  FlatList
+  FlatList,
 } from 'react-native';
 import { ScrollView, TextInput, } from 'react-native-gesture-handler';
 import React, { useState, useEffect, useRef } from 'react';
@@ -16,9 +16,8 @@ import FilterIcon from '../../asset/image/filter-v1.png';
 import Banner from '../../shared/Banner';
 import ProductCard from '../component/ProductCard';
 import SearchedProducts from '../component/SearchedProduct';
-
-const categories = require("../../asset/data/categories.json");
-const data = require('../../asset/data/products.json');
+import { useSelector } from 'react-redux';
+import { categoryState, productState } from '../../redux/reducer/Product';
 
 const Product = () => {
   // Search
@@ -34,11 +33,14 @@ const Product = () => {
   const [category, setCategory] = useState([]);
   const [triggerFilter, setTriggerFilter] = useState(false);
   const [noCategoryFound, setNoCategoryFound] = useState(false);
+  // data
+  const productData = useSelector(productState);
+  const categoryData = useSelector(categoryState);
 
   useEffect(() => {
-    setProducts(data);
-    setBasedData(data);
-    setCategory(categories);
+    setProducts(productData);
+    setBasedData(productData);
+    setCategory(categoryData);
   }, []);
 
   useEffect(() => {
@@ -103,11 +105,11 @@ const Product = () => {
       if (chosenCategory.current.length === 0) setNoCategoryFound(false);
     }
 
-    if (chosenCategory.current.length === 0) return setProducts(data);
+    if (chosenCategory.current.length === 0) return setProducts(productData);
 
     const relatedCategory = basedData.filter(product =>
       chosenCategory.current.some(
-        ({categoryId}) => categoryId === product.category.$oid,
+        ({categoryId}) => categoryId === product.category._id,
       ),
     );
 
@@ -127,10 +129,10 @@ const Product = () => {
             </TouchableOpacity>
             <FlatList
               data={category}
-              keyExtractor={item => '_' + item._id.$oid}
+              keyExtractor={item => '_' + item._id}
               renderItem={({item}) => (
                 <TouchableOpacity
-                  onPress={() => categoryItem(item.name, item._id.$oid)}
+                  onPress={() => categoryItem(item.name, item._id)}
                   style={{borderWidth: 1, marginBottom: 5}}>
                   <Text>{item.name}</Text>
                 </TouchableOpacity>
@@ -153,7 +155,7 @@ const Product = () => {
           </View>
         ) : (
           searchProduct.map(products => (
-            <SearchedProducts key={products._id.$oid} item={products} />
+            <SearchedProducts key={products._id} item={products} />
           ))
         )}
       </View>
@@ -192,7 +194,7 @@ const Product = () => {
             <EmptyListMessage />
           ) : (
             searchProduct.map(products => (
-              <SearchedProducts key={products._id.$oid} item={products} />
+              <SearchedProducts key={products._id} item={products} />
             ))
           )}
         </ScrollView>
@@ -209,7 +211,7 @@ const Product = () => {
                 backgroundColor: 'gainsboro',
               }}>
               {products.map(product => (
-                <ProductCard key={product._id.$oid} product={product} />
+                <ProductCard key={product._id} product={product} />
               ))}
             </View>
           )}
