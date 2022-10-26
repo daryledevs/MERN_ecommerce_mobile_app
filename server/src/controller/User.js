@@ -83,10 +83,33 @@ const userLogIn = async (req, res) => {
   }
 }
 
+const userResetPassword = async (req, res) => {
+  const { email, old_password, new_password, confirm_password} = req.body;
+
+  const user = await User.findOne({ email });
+  if(!user) return res.status(500).send("Incorrect email.");
+
+  const compare = await bcrypt.compare(old_password, user.passwordHash);
+  if(!compare) return res.status(500).send("Incorrect old password");
+
+  if(new_password !== confirm_password) return res.status(500).send("New and confirm password does not match.");
+
+  const updated_password = await User.findOneAndUpdate(
+    { _id: user._id },
+    { $set: { passwordHash: bcrypt.hashSync(new_password, 10) } }
+  );
+  
+  if(!updated_password) return res.status(500).send("Something went wrong.");
+
+  res.status(200).json({ success: true, message: "The password has successfully changed."});
+}
+
+
 module.exports = {
   getAllUser,
   createUser,
   userLogIn,
   getNumberOfUser,
   getUserByToken,
+  userResetPassword,
 };
