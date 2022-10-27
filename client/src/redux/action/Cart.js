@@ -7,9 +7,8 @@ export const addToCartAction = (state, action) => {
     itemCart.quantity += 1;
     allState[index] = itemCart;
     state = [...allState]
-    console.log(state[index]);
   } else {
-    return [...state, { ...action.payload, quantity: 0 }];
+    return [...state, { ...action.payload, quantity: 1 }];
   }
 };
 
