@@ -155,7 +155,7 @@ const Product = () => {
           </View>
         ) : (
           searchProduct.map(products => (
-            <SearchedProducts key={products._id} item={products} />
+            <SearchedProducts key={products._id + "_"} item={products} />
           ))
         )}
       </View>
