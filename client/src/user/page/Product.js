@@ -164,7 +164,7 @@ const Product = () => {
 
   return (
     <ScrollView
-      contentContainerStyle={showSearchList ? {height: '100%'} : null}
+      contentContainerStyle={showSearchList ? { height: '100%' } : { flex: 1, backgroundColor: 'gainsboro' }}
       keyboardShouldPersistTaps="always"
       nestedScrollEnabled={true}>
       <FilterModal />
@@ -179,7 +179,7 @@ const Product = () => {
         />
 
         <TouchableOpacity
-          style={{marginHorizontal: '2%'}}
+          style={{ marginHorizontal: '2%' }}
           onPress={() => setTriggerFilter(!triggerFilter)}>
           <Image source={FilterIcon} style={{width: 25, height: 25}} />
         </TouchableOpacity>
@@ -208,7 +208,6 @@ const Product = () => {
               style={{
                 flexDirection: 'row',
                 flexWrap: 'wrap',
-                backgroundColor: 'gainsboro',
               }}>
               {products.map(product => (
                 <ProductCard key={product._id} product={product} />
