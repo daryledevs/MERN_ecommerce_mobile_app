@@ -20,7 +20,7 @@ const Cart = () => {
   const navigation = useNavigation();
   var total = 0;
   cartData.forEach(element => {
-    total += element.price;
+    total += element.price * element.quantity;
   });
 
   return (
@@ -34,13 +34,18 @@ const Cart = () => {
             rightOpenValue={-80}
             disableRightSwipe={true}
             data={cartData}
-            keyExtractor={item => item._id.$oid}
+            keyExtractor={item => item._id}
             renderItem={(cart, rowMap) => {
               return (
                 <View style={styles.cartContainer}>
                   <Image style={{width: 45, height: 45}} source={placeholder} />
                   <Text style={styles.name}>{cart.item.name}</Text>
-                  <Text style={styles.price}>₱{cart.item.price}</Text>
+                  <Text style={styles.price}>
+                    {cart.item.quantity ? `${cart.item.quantity}x` : null}
+                  </Text>
+                  <Text style={styles.price}>
+                    ₱{cart.item.quantity * cart.item.price}
+                  </Text>
                 </View>
               );
             }}
