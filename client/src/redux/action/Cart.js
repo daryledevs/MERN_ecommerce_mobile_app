@@ -15,7 +15,7 @@ export const addToCartAction = (state, action) => {
 
 export const removeFromCartAction = (state, action) => {
   const filtered_state = state.filter(
-    filter => filter._id.$oid !== action.payload,
+    filter => filter._id !== action.payload,
   );
   return filtered_state;
 };
