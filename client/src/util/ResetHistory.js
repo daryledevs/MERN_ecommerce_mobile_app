@@ -12,12 +12,12 @@ const ResetHistory = (routeName) => {
   useFocusEffect(
     React.useCallback(() => {
       return () => {
-        navigation.dispatch(
-          CommonActions.reset({
+        navigation.dispatch(state => {
+          return CommonActions.reset({
             index: 0,
             routes: [{name: `${routeName}`}],
-          }),
-        );
+          });
+        });
       };
     }, []),
   );
