@@ -45,6 +45,16 @@ const userSchema = mongoose.Schema({
     type: String,
     default: "",
   },
+  
+  creation_time:{
+    type: Number,
+    required: true
+  },
+
+  last_time_sign_in:{
+    type: Number,
+    default: 0
+  }
 });
 
 userSchema.virtual("id").get(function () {
