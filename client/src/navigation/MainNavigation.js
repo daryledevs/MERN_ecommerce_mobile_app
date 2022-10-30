@@ -6,7 +6,16 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useDispatch, useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 // components
-import { Token, Loading, LoginTriggers, NoTokenLoading, tokenIsNull } from '../redux/reducer/User';
+import {
+  GoodByeLoadingState,
+  IsToken,
+  Loading,
+  LoginError,
+  LoginTriggers,
+  NoTokenLoading,
+  tokenIsNull,
+  userLogout,
+} from '../redux/reducer/User';
 import { getAllCategories, getAllProducts } from '../redux/action/Product';
 import FirstBootLoading from '../shared/FirstBootLoading';
 import { getUserInfoByToken } from '../redux/action/User';
@@ -16,50 +25,60 @@ import AuthNavigator from './AuthNavigator';
 import Header from '../shared/Header';
 import HomeNavigator from './Home';
 import CartNavigator from './Cart';
+import GoodByeLoading from '../shared/GoodByeLoading';
+
 const Tab = createBottomTabNavigator();
 
 const MainNavigation = () => {
   const cart = useSelector(cartData);
-  const isToken = useSelector(Token);
+  const isToken = useSelector(IsToken);
   const isLoading = useSelector(Loading);
   const loginTriggers = useSelector(LoginTriggers);
-  const dispatch = useDispatch();
+  const loginError = useSelector(LoginError);
+  const goodByeLoading = useSelector(GoodByeLoadingState);
 
+  const dispatch = useDispatch();
+  
   useEffect(() => {
     dispatch(getAllProducts());
     dispatch(getAllCategories());
   }, []);
+
+
+  useEffect(() => {
+    if(loginError.length === "Request failed with status code 404") dispatch(userLogout());
+  }, [loginError]);
   
    useEffect(() => {
-    if (loginTriggers) {
-      console.log('loginTriggers: ', loginTriggers);
-      dispatch(NoTokenLoading());
-    }
+     if (loginTriggers) dispatch(NoTokenLoading());
 
-    setTimeout(function () {
-      AsyncStorage.getItem('token')
-        .then(token => {
-          console.log('AsyncStorage (token): ', token);
-          console.log('Is token not null? ', token !== null);
-          if (token) dispatch(getUserInfoByToken());
-          else dispatch(tokenIsNull());
-        })
-        .catch(error => {
-          console.log('UserNavigator, error: ', error);
-        });
-    }, 3000);
-  }, [loginTriggers]);
+     setTimeout(function () {
+       AsyncStorage.getItem('token')
+         .then(token => {
+           console.log('AsyncStorage (token): ', token);
+           console.log('Is token not null? ', token !== null);
+           if (token) dispatch(getUserInfoByToken(token));
+           else dispatch(tokenIsNull());
+         })
+         .catch(error => {
+           console.log(error);
+         });
+     }, 3000);
+   }, [loginTriggers]);
 
   if(isLoading) {
-    console.log("isLoading: ", isLoading);
     return <FirstBootLoading/>;
+  }
+
+  if(goodByeLoading){
+    return <GoodByeLoading/>;
   }
 
   return (
     <>
       {isToken ? (
         <>
-          <Header/>
+          <Header />
           <Tab.Navigator
             initialRouteName="Home"
             screenOptions={{
