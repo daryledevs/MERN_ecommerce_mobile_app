@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import React, { useState} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { NoToken, userLogin} from '../../redux/reducer/User';
+import { NoTokenLoadingState, userLogin} from '../../redux/reducer/User';
 import LoadingScreen from '../../shared/LoadingScreen';
 import { useNavigation } from '@react-navigation/native';
 
@@ -15,7 +15,7 @@ const Login = () => {
   const navigation = useNavigation();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
-  const isLoading = useSelector(NoToken);
+  const isLoading = useSelector(NoTokenLoadingState);
 
   const dispatch = useDispatch();
 
