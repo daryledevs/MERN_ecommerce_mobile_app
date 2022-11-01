@@ -7,6 +7,7 @@ const {
   getNumberOfUser,
   getUserByToken,
   userResetPassword,
+  deleteAccount
 } = require("../controller/User");
 
 router.get("/", getAllUser);
@@ -15,5 +16,6 @@ router.get("/token", getUserByToken);
 router.post("/register", createUser);
 router.post("/login", userLogIn);
 router.post("/reset-password", userResetPassword);
+router.delete("/delete/account/:id", deleteAccount);
 
 module.exports = router;
