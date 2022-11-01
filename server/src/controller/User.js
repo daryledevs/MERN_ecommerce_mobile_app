@@ -74,7 +74,7 @@ const userLogIn = async (req, res) => {
         { expiresIn: "1d"}
       );
 
-      res.status(200).send({ email: email, token: token})
+      res.status(200).send({ email: email, token: token })
 
     } else {
       res.status(500).send("Invalid email or password.");
@@ -84,8 +84,19 @@ const userLogIn = async (req, res) => {
   }
 }
 
+const userLogout = async (req, res) => {
+  const { id } = req.params;
+  const user = await User.findByIdAndUpdate(
+    { _id: id },
+    { last_time_sign_in: Date.now() }
+  );
+  if(!user) return res.status(404).send("Something went wrong.");
+
+  res.status(200).send("Logout successfully.");
+}
+
 const userResetPassword = async (req, res) => {
-  const { email, old_password, new_password, confirm_password} = req.body;
+  const { email, old_password, new_password, confirm_password } = req.body;
 
   const user = await User.findOne({ email });
   if(!user) return res.status(500).send("Incorrect email.");
@@ -122,4 +133,5 @@ module.exports = {
   getUserByToken,
   userResetPassword,
   deleteAccount,
+  userLogout,
 };
