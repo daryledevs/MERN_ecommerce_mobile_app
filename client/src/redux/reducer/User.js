@@ -54,5 +54,6 @@ export const Loading = (state) => state.user.isLoading;
 export const GoodByeLoadingState = (state) => state.user.goodByeLoading;
 export const NoTokenLoadingState = (state) => state.user.noTokenLoading;
 export const IsToken = (state) => state.user.isToken;
+export const UserDetails = (state) => state.user.userDetails;
 export const { userLogin, userLogout, NoTokenLoading, tokenIsNull } = userSlice.actions;
 export default userSlice.reducer;
