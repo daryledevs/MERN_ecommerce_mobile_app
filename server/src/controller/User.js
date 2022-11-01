@@ -46,6 +46,7 @@ const createUser = async (req, res) => {
   const newUser = new User({
     ...body,
     passwordHash: bcrypt.hashSync(userPassword, 10),
+    creation_time: Date.now()
   });
 
   newUser
@@ -104,6 +105,14 @@ const userResetPassword = async (req, res) => {
   res.status(200).json({ success: true, message: "The password has successfully changed."});
 }
 
+const deleteAccount = async (req, res) => {
+  const { id } = req.params;
+  
+  const userAccount = await User.findByIdAndDelete(id);
+
+  if(!userAccount) return res.status(404).json("User not found.");
+  res.status(200).json({ successful: true, message: "Account has been deleted."  });
+}
 
 module.exports = {
   getAllUser,
@@ -112,4 +121,5 @@ module.exports = {
   getNumberOfUser,
   getUserByToken,
   userResetPassword,
+  deleteAccount,
 };
