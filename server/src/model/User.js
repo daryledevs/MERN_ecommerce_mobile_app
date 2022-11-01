@@ -1,60 +1,70 @@
 const mongoose = require("mongoose");
 
 const userSchema = mongoose.Schema({
-  name: {
+  given_name: {
     type: String,
     required: true,
   },
+
+  last_name: {
+    type: String,
+    required: true,
+  },
+
   email: {
     type: String,
     required: true,
   },
+
   passwordHash: {
     type: String,
     required: true,
   },
+
   phone: {
     type: String,
     required: true,
   },
+
   isAdmin: {
     type: Boolean,
     default: false,
   },
+
   house_number: {
     type: Number,
-    required: true,
+    default: null,
   },
 
   street: {
     type: String,
-    required: true,
+    default: "",
   },
 
   district: {
     type: String,
-    required: true,
+    default: "",
   },
 
   city: {
     type: String,
     default: "",
   },
-  
+
   zip: {
     type: String,
     default: "",
   },
-  
-  creation_time:{
+
+  creation_time: {
     type: Number,
-    required: true
+    default: null
   },
 
-  last_time_sign_in:{
+  last_time_sign_in: {
     type: Number,
-    default: 0
-  }
+    default: null,
+  },
 });
 
 userSchema.virtual("id").get(function () {
