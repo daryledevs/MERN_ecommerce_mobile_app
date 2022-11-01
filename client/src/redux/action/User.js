@@ -18,13 +18,25 @@ export const loginUserAction = (state, action) => {
 };
 
 export const userLogoutAction = (state, action) => {
+  const id = action.payload;
+  state.userDetails = {};
+  state.goodByeLoading = true;
+  state.loginTriggers = false;
+  
+  api
+    .get(`users/logout/${id}`)
+    .then(res => {
+      console.log(res.data);
+    })
+    .catch(error => {
+      console.log(error.message);
+    });
+
   AsyncStorage.setItem('token', '').then(token => {
     console.log('logout token: ', token);
   });
 
-  state.userDetails = {};
-  state.goodByeLoading = true;
-  state.loginTriggers = false;
+
 };
 
 export const getUserInfoByToken = createAsyncThunk(
