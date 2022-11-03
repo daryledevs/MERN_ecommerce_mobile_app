@@ -8,7 +8,8 @@ const uploadImage = (path) => {
     },
 
     filename: function (req, file, cb) {
-      cb(null, file.originalname);
+      const regex_removeWhiteSpaces = /\s/g;
+      cb(null, file.originalname.replace(regex_removeWhiteSpaces, "_"));
     },
   });
 
