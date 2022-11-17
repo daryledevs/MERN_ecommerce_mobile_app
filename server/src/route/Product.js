@@ -5,24 +5,16 @@ const {
   createProduct,
   updateProduct,
 } = require("../controller/Product");
-const uploadImage = require("../helper/multer");
+const uploadImage = require("../middleware/multer");
 
 const uploadOption = uploadImage("./src/uploads/product");
+const option_field = [
+  { name: "image", maxCount: 1 },
+  { name: "images", maxCount: 7 },
+];
 
 router.get("/", getAllProducts);
-
-router.post("/", uploadOption.fields([
-  { name: "image", maxCount: 1 },
-  { name: "images", maxCount: 7 }
-]), createProduct);
-
-router.put(
-  "/update/:id",
-  uploadOption.fields([
-    { name: "image", maxCount: 1 },
-    { name: "images", maxCount: 7 },
-  ]),
-  updateProduct
-);
+router.post("/", uploadOption.fields(option_field), createProduct);
+router.put("/update/:id", uploadOption.fields(option_field), updateProduct);
 
 module.exports = router;
