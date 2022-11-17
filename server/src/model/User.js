@@ -40,6 +40,11 @@ const userSchema = mongoose.Schema({
     type: String,
     default: "",
   },
+  
+  subdivision:{
+    type: String,
+    default: "",
+  },
 
   district: {
     type: String,
