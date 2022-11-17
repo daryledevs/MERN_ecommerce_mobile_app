@@ -2,13 +2,28 @@ import { createSlice } from "@reduxjs/toolkit";
 import { loginUserAction, getUserInfoByToken, userLogoutAction } from "../action/User";
 
 const initialState = {
-  userDetails: {},
+  userDetails: {
+    _id: '',
+    given_name: '',
+    last_name: '',
+    email: '',
+    phone: '',
+    isAdmin: '',
+    house_number: '',
+    street: '',
+    subdivision: '',
+    district: '',
+    city: '',
+    zip: '',
+    creation_time: null,
+    last_time_sign_in: null,
+  },
   isToken: false,
   isLoading: true,
   goodByeLoading: false,
   loginTriggers: false,
   noTokenLoading: false,
-  loginError: "",
+  loginError: '',
 };
 
 const userSlice = createSlice({
