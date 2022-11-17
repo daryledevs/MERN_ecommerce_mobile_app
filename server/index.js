@@ -15,14 +15,20 @@ const PORT = process.env.PORT || 5000;
 const product = require("./src/route/Product");
 const category = require("./src/route/Category");
 const user = require("./src/route/User");
+const like = require("./src/route/Wishlist");
+const review = require("./src/route/Review");
 
+// for testing
 app.get(`${API}/hello`, (req, res) => {
   res.send("Hello world");
 });
 
+// routes
 app.use(`${API}/products`, product);
 app.use(`${API}/categories`, category);
 app.use(`${API}/users`, user);
+app.use(`${API}/likes`, like);
+app.use(`${API}/review`, review);
 
 // database
 mongoose.connect(process.env.CONNECTION_URL, {
