@@ -52,11 +52,6 @@ const productSchema = mongoose.Schema({
     max: 255,
   },
 
-  rating: {
-    type: Number,
-    default: 0,
-  },
-
   numReviews: {
     type: Number,
     default: 0,
