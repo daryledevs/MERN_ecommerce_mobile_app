@@ -56,6 +56,11 @@ const userSchema = mongoose.Schema({
     default: "",
   },
 
+  province:{
+    type: String,
+    default: "",
+  },
+
   zip: {
     type: String,
     default: "",
