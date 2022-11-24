@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { loginUserAction, getUserInfoByToken, userLogoutAction } from "../action/User";
+import { userLogin, getUserInfoByToken, userLogoutAction } from "../action/User";
 
 const initialState = {
   userDetails: {
@@ -38,7 +38,6 @@ const userSlice = createSlice({
       state.goodByeLoading = false;
       state.isToken = false;
     },
-    userLogin: loginUserAction,
     userLogout: userLogoutAction,
   },
   extraReducers(builder) {
@@ -60,6 +59,21 @@ const userSlice = createSlice({
       state.loginError = action.payload;
       state.isLoading = false;
      });
+
+     builder.addCase(userLogin.pending, (state, action) => {
+      state.loginTriggers = true;
+     });
+
+     builder.addCase(userLogin.fulfilled, (state, action) => {
+      console.log("Login successfully!", action.payload);
+      state.loginTriggers = false;
+     });
+
+     builder.addCase(userLogin.rejected, (state, action) => {
+      state.loginTriggers = false;
+      state.loginError = action.payload;
+      console.log("Login rejected!", action.payload);
+     });
   },
 });
 
@@ -70,5 +84,5 @@ export const GoodByeLoadingState = (state) => state.user.goodByeLoading;
 export const NoTokenLoadingState = (state) => state.user.noTokenLoading;
 export const IsToken = (state) => state.user.isToken;
 export const UserDetails = (state) => state.user.userDetails;
-export const { userLogin, userLogout, NoTokenLoading, tokenIsNull } = userSlice.actions;
+export const { userLogout, NoTokenLoading, tokenIsNull } = userSlice.actions;
 export default userSlice.reducer;
