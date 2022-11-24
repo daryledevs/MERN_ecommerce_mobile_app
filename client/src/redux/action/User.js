@@ -2,24 +2,37 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../../asset/api';
 
-export const loginUserAction = (state, action) => {
-  const { email, password } = action.payload;
-  state.loginTriggers = true;
-  api
-    .post('users/login', {email, password})
-    .then(async res => {
-      console.log(res.data, res.data.token);
-      const token = res.data.token;
-      await AsyncStorage.setItem('token', token);
-    })
-    .catch(error => {
-      console.log(error);
-    });
-};
+export const userLogin = createAsyncThunk(
+  'user/userLogin',
+  async ({ email, password }, { fulfillWithValue, rejectWithValue }) => {
+    try {
+      const response = await api.post('users/login', { email, password })
+      await AsyncStorage.setItem("token", response.data.token);
+      return fulfillWithValue(response.data);
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
 
 export const userLogoutAction = (state, action) => {
   const id = action.payload;
-  state.userDetails = {};
+  state.userDetails = {
+    _id: '',
+    given_name: '',
+    last_name: '',
+    email: '',
+    phone: '',
+    isAdmin: '',
+    house_number: '',
+    street: '',
+    subdivision: '',
+    district: '',
+    city: '',
+    zip: '',
+    creation_time: null,
+    last_time_sign_in: null,
+  };
   state.goodByeLoading = true;
   state.loginTriggers = false;
   
