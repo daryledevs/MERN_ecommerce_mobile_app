@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, Image, SafeAreaView, View} from 'react-native';
-import logo from '../asset/image/logo.png'
+import logo from '../../asset/image/logo.png'
 const Header = () => {
   return (
     <SafeAreaView style={styles.header}>

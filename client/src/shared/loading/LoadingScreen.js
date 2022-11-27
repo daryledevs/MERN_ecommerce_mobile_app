@@ -1,7 +1,8 @@
+import React, { useState, useEffect } from 'react';
 import {StyleSheet, View, Modal, ActivityIndicator} from 'react-native';
-import React from 'react';
 
 const LoadingScreen = ({isVisible}) => {
+
   return (
     <Modal animationType="fade" transparent={true} visible={isVisible}>
       <View style={styles.container}>

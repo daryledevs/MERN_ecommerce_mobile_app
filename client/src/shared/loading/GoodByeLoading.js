@@ -1,8 +1,9 @@
-import React from 'react';
-import sad from '../asset/image/sad.png';
+import React, { useEffect, useState } from 'react';
+import sad from '../../asset/image/sad.png';
 import { StyleSheet, Text, View, Image, Modal } from 'react-native';
 
 const GoodByeLoading = ({ isVisible }) => {
+
   return (
     <Modal visible={isVisible}>
       <View style={styles.container}>

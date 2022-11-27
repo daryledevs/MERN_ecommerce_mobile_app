@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {Image, StyleSheet, Dimensions, View, ScrollView} from 'react-native';
 import Swiper from 'react-native-swiper';
-import placeholder from '../asset/image/placeholder.png'
+import placeholder from '../../asset/image/placeholder.png'
 var {width} = Dimensions.get('window');
 
 const Banner = () => {
