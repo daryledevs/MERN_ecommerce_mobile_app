@@ -13,7 +13,7 @@ import React, { useState, useEffect, useRef } from 'react';
 // asset
 import FilterIcon from '../../asset/image/filter-v1.png';
 // component
-import Banner from '../../shared/Banner';
+import Banner from '../../shared/others/Banner';
 import ProductCard from '../component/ProductCard';
 import SearchedProducts from '../component/SearchedProduct';
 import { useSelector } from 'react-redux';
