@@ -1,81 +1,119 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 // packages
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import Icon_2 from 'react-native-vector-icons/AntDesign';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useDispatch, useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 // components
 import {
+  error_cleanup,
   GoodByeLoadingState,
   IsToken,
   Loading,
   LoginError,
-  LoginTriggers,
-  NoTokenLoading,
   tokenIsNull,
-  userLogout,
 } from '../redux/reducer/User';
-import { getAllCategories, getAllProducts } from '../redux/action/Product';
-import FirstBootLoading from '../shared/FirstBootLoading';
+import FirstBootLoading from '../shared/loading/FirstBootLoading';
 import { getUserInfoByToken } from '../redux/action/User';
 import UserProfile from '../user/page/UserProfile';
 import { cartData } from '../redux/reducer/Cart';
 import AuthNavigator from './AuthNavigator';
-import Header from '../shared/Header';
+import Header from '../shared/others/Header';
 import HomeNavigator from './Home';
 import CartNavigator from './Cart';
-import GoodByeLoading from '../shared/GoodByeLoading';
+import GoodByeLoading from '../shared/loading/GoodByeLoading';
+import Wishlist from '../user/page/Wishlist';
+import {
+  product_fetchFailed,
+  FetchProductStatus,
+} from '../redux/reducer/Product';
+import ErrorModal from '../shared/modal/ErrorModal';
+import { FetchWishlistStatus, wishlist_fetchFailed } from '../redux/reducer/Wishlist';
 
 const Tab = createBottomTabNavigator();
 
 const MainNavigation = () => {
+  const dispatch = useDispatch();
+
+  // trigger modals
+  const [triggerNoToken, setTriggerNoToken] = useState(false);
+  const [triggerUserNotFound, setTriggerUserNotFound] = useState(false);
+
+  // redux states
   const cart = useSelector(cartData);
   const isToken = useSelector(IsToken);
   const isLoading = useSelector(Loading);
-  const loginTriggers = useSelector(LoginTriggers);
   const loginError = useSelector(LoginError);
   const goodByeLoading = useSelector(GoodByeLoadingState);
+  const fetchProductStatus = useSelector(FetchProductStatus);
+  const fetchWishlistStatus = useSelector(FetchWishlistStatus);
 
-  const dispatch = useDispatch();
-  
+  function fetchFailed(){
+    dispatch(product_fetchFailed());
+    dispatch(wishlist_fetchFailed());
+  }
+
   useEffect(() => {
-    dispatch(getAllProducts());
-    dispatch(getAllCategories());
-  }, []);
+    switch (loginError) {
+      case 'Token is expired':
+        setTriggerNoToken(true);
+        fetchFailed();
+        break;
 
-
-  useEffect(() => {
-    if(loginError.length === "Request failed with status code 404") dispatch(userLogout());
+      case 'User not found':
+        setTriggerUserNotFound(true);
+        break;
+    }
+    dispatch(error_cleanup());
   }, [loginError]);
   
    useEffect(() => {
-     if (loginTriggers) dispatch(NoTokenLoading());
+     AsyncStorage.getItem('token')
+       .then(token => {
+          console.log('AsyncStorage (token): ', token);
+          if (token) return dispatch(getUserInfoByToken(token));
+          else {
+            fetchFailed();
+            setTimeout(() => dispatch(tokenIsNull()), 3000);
+          }
+        })
+       .catch(error => {
+         console.log(error);
+       });
+   }, [goodByeLoading]);
 
-     setTimeout(function () {
-       AsyncStorage.getItem('token')
-         .then(token => {
-           console.log('AsyncStorage (token): ', token);
-           console.log('Is token not null? ', token !== null);
-           if (token) dispatch(getUserInfoByToken(token));
-           else dispatch(tokenIsNull());
-         })
-         .catch(error => {
-           console.log(error);
-         });
-     }, 3000);
-   }, [loginTriggers]);
+  if (
+    !fetchProductStatus.doneGetProduct ||
+    !fetchProductStatus.doneGetCategory ||
+    !fetchWishlistStatus || isLoading 
+  ) return <FirstBootLoading />;
 
-  if(isLoading) {
-    return <FirstBootLoading/>;
-  }
-
-  if(goodByeLoading){
-    return <GoodByeLoading/>;
-  }
+  if(goodByeLoading) return <GoodByeLoading isVisible={goodByeLoading} />;
 
   return (
     <>
+      {/* MODALS */}
+      
+      <ErrorModal
+        modalTrigger={triggerNoToken}
+        errorTitle="Token Expired"
+        errorDescription="Your session has expired. Please login again to refresh your token
+            session. Thank you!"
+        dismissOnPress={async () => {
+          setTriggerNoToken(false);
+          await AsyncStorage.removeItem("token");
+        }}
+      />
+
+      <ErrorModal
+        modalTrigger={triggerUserNotFound}
+        errorTitle="User not found"
+        errorDescription="Please make sure you entered the right email."
+        dismissOnPress={async () => setTriggerUserNotFound(false)}
+      />
+
       {isToken ? (
         <>
           <Header />
@@ -86,7 +124,7 @@ const MainNavigation = () => {
               showLabel: false,
               activeTinColor: '#e91e63',
               headerShown: false,
-              tabBarStyle: {height: 60},
+              // tabBarStyle: {height: 60}, test this on android
               tabBarLabelStyle: {
                 fontSize: 13,
               },
@@ -125,6 +163,20 @@ const MainNavigation = () => {
               }}
             />
             <Tab.Screen
+              name="Wishlist"
+              component={Wishlist}
+              options={{
+                tabBarIcon: ({color}) => (
+                  <Icon_2
+                    name="heart"
+                    style={{position: 'relative'}}
+                    color={color}
+                    size={24}
+                  />
+                ),
+              }}
+            />
+            <Tab.Screen
               name="Me"
               component={UserProfile}
               options={{
@@ -141,7 +193,9 @@ const MainNavigation = () => {
           </Tab.Navigator>
         </>
       ) : (
-        <AuthNavigator />
+        <>
+          <AuthNavigator />
+        </>
       )}
     </>
   );
