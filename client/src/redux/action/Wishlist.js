@@ -14,22 +14,18 @@ export const getUserLikes = createAsyncThunk(
   },
 );
 
-export const like_unlikeAction = (state, action) => {
-  const not_negative_one = 0;
-  const {product_item} = action.payload;
-  const item_index = state.liked_product.findIndex(
-    item => item._id === product_item._id,
-  );
-
-  if (item_index >= not_negative_one) state.liked_product.splice(item_index, 1);
-  else state.liked_product.push(product_item);
-
-  api
-    .patch(`/likes/like-unlike/${product_item.product_id._id}/${product_item.user_id}`)
-    .then(res => {
-      console.log(res.data.isLike);
-    })
-    .catch(error => {
-      console.log(error.response.data);
-    });
-};
+export const like_unlike = createAsyncThunk(
+  'wishlist/like_unlike',
+  async ({ product, userId }, { fulfillWithValue, rejectWithValue }) => {
+    const promise = await api
+      .patch(`/likes/like-unlike/${product._id}/${userId}`)
+      .then(res => {
+        return res.data;
+      })
+      .catch(error => {
+        return rejectWithValue(error.response.data);
+      });
+    const data = await promise;
+    return fulfillWithValue(data)
+  },
+);
