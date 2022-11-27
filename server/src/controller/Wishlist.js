@@ -14,14 +14,12 @@ const countLike = async (req, res) => {
   res.status(200).send({ count_likes: wishlist ? wishlist.length : 0 }); // if undefined, set to zero
 };
 
-
 // get all the user's wishlists.
 const usersLike = async (req, res) => {
   const { user_id } = req.params;
   const usersWishlist = await Wishlist.find({ user_id }).populate("product_id");
   res.status(200).send({ usersWishlist });
 };
-
 
 // like or unlike the product in one function.
 const like_unlike = async (req, res) => {
@@ -38,26 +36,28 @@ const like_unlike = async (req, res) => {
 
     new_wishlist
       .save()
-      .then((liked_product) => {
-        res.status(200).send({ liked_product: liked_product, isLike: true });
+      .then(async (liked_product) => {
+        const populated_product = await liked_product.populate("product_id");
+        res.status(200).send({
+          liked_product: populated_product,
+          isLike: true,
+        });
       })
-      .catch(() => {
-        res.status(500).send("Something went wrong.");
+      .catch((error) => {
+        res.status(500).send({message: error.message});
       });
 
   } else{
     // If it exists, then delete the target instance.
     Wishlist.findOneAndDelete(wishlist._id)
       .then((deleted) => {
-        res.status(200).send({ deleted_user: deleted, isLike: false });
+        res.status(200).send({ deleted_wishlist: deleted, isLike: false });
       })
       .catch((error) => {
         res.status(404).send(error.message);
       });
   }
-
 };
-
 
 module.exports = {
   like_unlike,
