@@ -4,14 +4,14 @@ const { Wishlist }  = require("../model/Wishlist");
 const status = async (req, res) => {
   const { product_id, user_id } = req.params;
   const like = await Wishlist.find({ product_id, user_id });
-  res.json({ isLike: like.length !== 0 ? true : false });
+  res.status(200).send({ isLike: like.length !== 0 ? true : false });
 };
 
 // get a certain number of likes for the product 
 const countLike = async (req, res) => {
   const { product_id } = req.params;
   const wishlist = await Wishlist.find({ product_id });
-  res.json({ count_likes: wishlist ? wishlist.length : 0 }); // if undefined, set to zero
+  res.status(200).send({ count_likes: wishlist ? wishlist.length : 0 }); // if undefined, set to zero
 };
 
 
@@ -19,7 +19,7 @@ const countLike = async (req, res) => {
 const usersLike = async (req, res) => {
   const { user_id } = req.params;
   const usersWishlist = await Wishlist.find({ user_id }).populate("product_id");
-  res.json({ like_list: usersWishlist });
+  res.status(200).send({ usersWishlist });
 };
 
 
@@ -38,21 +38,21 @@ const like_unlike = async (req, res) => {
 
     new_wishlist
       .save()
-      .then(() => {
-        res.json({ isLike: true });
+      .then((liked_product) => {
+        res.status(200).send({ liked_product: liked_product, isLike: true });
       })
       .catch(() => {
-        res.status(500).send("Something went wrong.")
+        res.status(500).send("Something went wrong.");
       });
 
   } else{
     // If it exists, then delete the target instance.
     Wishlist.findOneAndDelete(wishlist._id)
-      .then(() => {
-        res.json({ isLike: false });
+      .then((deleted) => {
+        res.status(200).send({ deleted_user: deleted, isLike: false });
       })
       .catch((error) => {
-        res.send(error);
+        res.status(404).send(error.message);
       });
   }
 
