@@ -2,11 +2,17 @@ import React from 'react';
 import { StyleSheet, Text, View, Image, Button } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import user_picture from '../../asset/image/user_placeholder.png';
+import { remove_product_data } from '../../redux/reducer/Product';
 import { UserDetails, userLogout } from '../../redux/reducer/User';
 
 const UserProfile = () => {
   const dispatch = useDispatch();
   const userDetails = useSelector(UserDetails);
+
+  function logoutHandler(){
+    dispatch(userLogout(userDetails._id));
+    dispatch(remove_product_data());
+  }
 
   return (
     <View style={{flex: 1, backgroundColor: 'white'}}>
@@ -14,15 +20,14 @@ const UserProfile = () => {
         <View style={styles.userImageContainer}>
           <Image source={user_picture} style={styles.userImage} />
         </View>
-        <Text>Name</Text>
+        <Text>
+          {userDetails.given_name} {userDetails.last_name}
+        </Text>
       </View>
-      <Text>Phone</Text>
-      <Text>Email</Text>
-      <Text>Street, Apartment, City, Country</Text>
-      <Button
-        title="Logout"
-        onPress={() => dispatch(userLogout(userDetails._id))}
-      />
+      <Text>Phone: {userDetails.phone}</Text>
+      <Text>Email: {userDetails.email}</Text>
+      <Text>Street, subdivision, City, Country</Text>
+      <Button title="Logout" onPress={logoutHandler} />
     </View>
   );
 }

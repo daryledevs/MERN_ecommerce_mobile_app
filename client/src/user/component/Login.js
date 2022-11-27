@@ -7,16 +7,13 @@ import {
 } from 'react-native';
 import React, { useState} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { LoginTriggers } from '../../redux/reducer/User';
 import { userLogin } from '../../redux/action/User';
-import LoadingScreen from '../../shared/LoadingScreen';
 import { useNavigation } from '@react-navigation/native';
 
 const Login = () => {
   const navigation = useNavigation();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
-  const isLoading = useSelector(LoginTriggers);
 
   const dispatch = useDispatch();
 
@@ -24,10 +21,8 @@ const Login = () => {
     dispatch(userLogin({ email, password }));
   }
 
-
   return (
     <View style={styles.container} behavior="padding">
-      <LoadingScreen isVisible={isLoading} />
       <View style={styles.inputContainer}>
         <TextInput
           placeholder="Email"
