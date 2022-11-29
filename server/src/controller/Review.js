@@ -5,8 +5,60 @@ const { User } = require("../model/User");
 // get all product reviews including comments and ratings
 const product_reviews = async (req, res) =>{
   const { product_id } = req.params;
-  const reviews = await Review.find({ product_id });
-  res.send(reviews)
+  const reviews = await Review.find({ product_id }).populate("user_id");
+  const total_review = await Review.find({ product_id }).estimatedDocumentCount();
+
+  let one_star = 0,
+    two_star = 0,
+    three_star = 0,
+    four_star = 0,
+    five_star = 0,
+    star_value = 0;
+
+  if(!reviews) return res.status(404).send({ review: reviews, message: "Review not found" });
+  
+  for(let i = 0; i < reviews.length; i++){
+    switch (reviews[i].product_rating) {
+      case 1:
+        one_star += 1;
+        star_value += 1;
+        break;
+
+      case 2:
+        two_star += 1;
+        star_value += 2;
+        break;
+
+      case 3:
+        three_star += 1;
+        star_value += 3;
+        break;
+
+      case 4:
+        four_star += 1;
+        star_value += 4;
+        break;
+
+      case 5:
+        five_star += 1;
+        star_value += 5;
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  res.status(200).send({
+    reviews: reviews,
+    total_review: total_review,
+    total_ratings: (star_value / total_review).toFixed(1),
+    five_star:  ((five_star / total_review)  * 100).toFixed(2),
+    four_star:  ((four_star / total_review)  * 100).toFixed(2),
+    three_star: ((three_star / total_review) * 100).toFixed(2),
+    two_star:   ((two_star / total_review)   * 100).toFixed(2),
+    one_star:   ((one_star / total_review)   * 100).toFixed(2),
+  });
 };
 
 // create reviews for the product
@@ -17,7 +69,7 @@ const user_review = async (req, res) => {
 
   if(!isUserExist && !isProductExist) return res
     .status(404)
-    .json({
+    .send({
       success: false,
       message: "There is neither a user nor a product. ",
     });
@@ -44,10 +96,10 @@ const delete_review = async(req, res) =>{
   const { review_id } = req.params;
   Review.findOneAndDelete({ review_id })
     .then(() => {
-      res.send("Delete successfully!");
+      res.status(200).send("Delete successfully!");
     })
     .catch((error) => {
-      res.status(404).json({ message: "Delete unsuccessful.", error});
+      res.status(404).send({ message: "Delete unsuccessful.", error: error.message});
     });
 };
 
