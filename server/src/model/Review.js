@@ -10,7 +10,7 @@ const reviewSchema = mongoose.Schema({
   user_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: true
+    required: true,
   },
 
   product_rating: {
@@ -23,6 +23,11 @@ const reviewSchema = mongoose.Schema({
   user_comment: {
     type: String,
     default: "",
+  },
+
+  comment_date: {
+    type: Number,
+    default: Date.now(),
   },
 });
 
