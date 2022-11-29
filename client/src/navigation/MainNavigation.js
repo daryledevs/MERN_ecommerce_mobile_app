@@ -20,7 +20,6 @@ import { getUserInfoByToken } from '../redux/action/User';
 import UserProfile from '../user/page/UserProfile';
 import { cartData } from '../redux/reducer/Cart';
 import AuthNavigator from './AuthNavigator';
-import Header from '../shared/others/Header';
 import HomeNavigator from './Home';
 import CartNavigator from './Cart';
 import GoodByeLoading from '../shared/loading/GoodByeLoading';
@@ -31,6 +30,7 @@ import {
 } from '../redux/reducer/Product';
 import ErrorModal from '../shared/modal/ErrorModal';
 import { FetchWishlistStatus, wishlist_fetchFailed } from '../redux/reducer/Wishlist';
+import { ShowRoute } from '../redux/reducer/RouteNavigation';
 
 const Tab = createBottomTabNavigator();
 
@@ -46,6 +46,7 @@ const MainNavigation = () => {
   const isToken = useSelector(IsToken);
   const isLoading = useSelector(Loading);
   const loginError = useSelector(LoginError);
+  const show_route = useSelector(ShowRoute);
   const goodByeLoading = useSelector(GoodByeLoadingState);
   const fetchProductStatus = useSelector(FetchProductStatus);
   const fetchWishlistStatus = useSelector(FetchWishlistStatus);
@@ -95,7 +96,7 @@ const MainNavigation = () => {
   return (
     <>
       {/* MODALS */}
-      
+
       <ErrorModal
         modalTrigger={triggerNoToken}
         errorTitle="Token Expired"
@@ -103,7 +104,7 @@ const MainNavigation = () => {
             session. Thank you!"
         dismissOnPress={async () => {
           setTriggerNoToken(false);
-          await AsyncStorage.removeItem("token");
+          await AsyncStorage.removeItem('token');
         }}
       />
 
@@ -116,7 +117,6 @@ const MainNavigation = () => {
 
       {isToken ? (
         <>
-          <Header />
           <Tab.Navigator
             initialRouteName="Home"
             screenOptions={{
@@ -124,10 +124,10 @@ const MainNavigation = () => {
               showLabel: false,
               activeTinColor: '#e91e63',
               headerShown: false,
-              // tabBarStyle: {height: 60}, test this on android
               tabBarLabelStyle: {
                 fontSize: 13,
               },
+              tabBarStyle: { display: show_route ? 'none' : 'flex' }
             }}>
             <Tab.Screen
               name="Home"

@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import user_picture from '../../asset/image/user_placeholder.png';
 import { remove_product_data } from '../../redux/reducer/Product';
 import { UserDetails, userLogout } from '../../redux/reducer/User';
+import Header from '../../shared/others/Header';
 
 const UserProfile = () => {
   const dispatch = useDispatch();
@@ -16,6 +17,7 @@ const UserProfile = () => {
 
   return (
     <View style={{flex: 1, backgroundColor: 'white'}}>
+      <Header/>
       <View style={styles.email_name_container}>
         <View style={styles.userImageContainer}>
           <Image source={user_picture} style={styles.userImage} />

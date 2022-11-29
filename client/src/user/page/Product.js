@@ -18,6 +18,7 @@ import ProductCard from '../component/ProductCard';
 import SearchedProducts from '../component/SearchedProduct';
 import { useSelector } from 'react-redux';
 import { categoryState, productState } from '../../redux/reducer/Product';
+import Header from '../../shared/others/Header';
 
 const Product = () => {
   // Search
@@ -164,9 +165,14 @@ const Product = () => {
 
   return (
     <ScrollView
-      contentContainerStyle={showSearchList ? { height: '100%' } : { flex: 1, backgroundColor: 'gainsboro' }}
+      contentContainerStyle={
+        showSearchList
+          ? {height: '100%'}
+          : {flex: 1, backgroundColor: 'gainsboro'}
+      }
       keyboardShouldPersistTaps="always"
       nestedScrollEnabled={true}>
+      <Header />
       <FilterModal />
 
       <View style={styles.searchbarContainer}>
@@ -179,7 +185,7 @@ const Product = () => {
         />
 
         <TouchableOpacity
-          style={{ marginHorizontal: '2%' }}
+          style={{marginHorizontal: '2%'}}
           onPress={() => setTriggerFilter(!triggerFilter)}>
           <Image source={FilterIcon} style={{width: 25, height: 25}} />
         </TouchableOpacity>

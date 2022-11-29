@@ -13,6 +13,7 @@ import { SwipeListView } from 'react-native-swipe-list-view';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { clearCart, removeFromCart } from '../../redux/reducer/Cart';
 import placeholder from '../../asset/image/placeholder.png';
+import Header from '../../shared/others/Header';
 
 const Cart = () => {
   const cartData = useSelector(state => state.cart);
@@ -24,7 +25,8 @@ const Cart = () => {
   });
 
   return (
-    <View>
+    <>
+      <Header />
       {cartData.length !== 0 ? (
         <View style={{height: '100%', position: 'relative'}}>
           <SwipeListView
@@ -95,7 +97,7 @@ const Cart = () => {
           </View>
         </View>
       )}
-    </View>
+    </>
   );
 };
 
@@ -153,8 +155,7 @@ const styles = StyleSheet.create({
   },
   // -------------
   noItemContainer: {
-    width: '100%',
-    height: '100%',
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
