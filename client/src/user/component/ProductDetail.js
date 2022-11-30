@@ -25,7 +25,14 @@ const ProductDetail = ({ route }) => {
   const [saveStarRating, setSaveStarRating] = useState(0);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [productReview, setProductReview] = useState([]);
-  const [itemQuantity, setItemQuantity] = useState(1)
+  const [itemQuantity, setItemQuantity] = useState(1);
+  const [submitEditReview, setSubmitEditReview] = useState(false);
+  const [userReview, setUserReview] = useState({
+    review_id: "",
+    product_rating: 0,
+    user_comment: '',
+  });
+
   const timesToIterate = [1, 2, 3, 4, 5];
 
   GetCurrentPage('Homepage');
@@ -36,71 +43,166 @@ const ProductDetail = ({ route }) => {
       setIsInWishlist(res.data.isLike);
       setIsDoneGetStatus(true);
     });
+  }, []);
 
+  useEffect(() => {
+    setIsDoneGetComment(false);
     api.get(`review/${product._id}`).then(res => {
       setProductReview(res.data);
       setIsDoneGetComment(true);
     });
-  }, []);
+  }, [submitEditReview]);
 
   useEffect(() => {
     if(!showReviewModal) setSaveStarRating(0);
     setStarRating(0);
   }, [starRating, showReviewModal]);
 
+  function DeleteReview(){
+    api
+      .delete(`/review/${productReview.reviews[0]._id}`)
+      .then(() => {
+        setSubmitEditReview(!submitEditReview);
+      })
+      .catch(error => {
+        console.log(error.message);
+      });
+  };
+
   const UserReviewContainer = () => {
+
+    const user_review = productReview.reviews.find(
+      review => review.user_id._id === userData._id,
+    );
+
     return (
       <View style={styles.userReviewContainer}>
-        <View>
-          <Text
-            style={{
-              fontSize: 18,
-              fontWeight: 'bold',
-              color: 'black',
-            }}>
-            Rate this product
-          </Text>
-          <Text>
-            Review will be shown in public including the name and message.
-          </Text>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              marginVertical: 10,
-            }}>
-            {timesToIterate.map(item => {
-              return (
+        {productReview.reviews.some(
+          review => review.user_id._id === userData._id,
+        ) ? (
+          <View>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Icon
+                name="user"
+                color="grey"
+                size={25}
+                style={{marginHorizontal: 5}}
+              />
+              <Text>
+                {user_review.user_id.given_name} {user_review.user_id.last_name}
+              </Text>
+            </View>
+            <View style={{padding: 5}}>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                {timesToIterate.map(item => {
+                  return (
+                    <View key={item}>
+                      <Image
+                        source={
+                          user_review.product_rating >= item
+                            ? star_solid
+                            : star_plain
+                        }
+                        style={{width: 12, height: 12, margin: 1}}
+                      />
+                    </View>
+                  );
+                })}
+                <Text style={{marginLeft: 5}}>
+                  {new Date(user_review.comment_date).toLocaleDateString()}
+                </Text>
+              </View>
+              <Text>{user_review.user_comment}</Text>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <Pressable
-                  key={item}
+                  style={{ marginRight: 10}}
                   onPress={() => {
-                    setStarRating(item);
-                    setTimeout(() => {
-                      // place a setTimeout to see star being clicked first
-                      setShowReviewModal(true);
-                      setSaveStarRating(item);
-                    }, 500);
+                    setUserReview({
+                      review_id: user_review._id,
+                      product_rating: user_review.product_rating,
+                      user_comment: user_review.user_comment,
+                    });
+                    setShowReviewModal(true);
                   }}>
-                  <Image
-                    source={starRating >= item ? star_solid : star_plain}
-                    style={{width: 35, height: 35}}
-                  />
+                  <Text
+                    style={{
+                      marginTop: 10,
+                      fontSize: 16,
+                      fontWeight: 'bold',
+                      color: 'blue',
+                      alignSelf: 'flex-start',
+                    }}>
+                    Edit review
+                  </Text>
                 </Pressable>
-              );
-            })}
+                <Pressable
+                  onPress={DeleteReview}>
+                  <Text
+                    style={{
+                      marginTop: 10,
+                      fontSize: 16,
+                      fontWeight: 'bold',
+                      color: 'blue',
+                      alignSelf: 'flex-start',
+                    }}>
+                    Delete review
+                  </Text>
+                </Pressable>
+              </View>
+            </View>
           </View>
-          <Pressable onPress={() => setShowReviewModal(true)}>
+        ) : (
+          <View>
             <Text
               style={{
-                fontSize: 16,
+                fontSize: 18,
                 fontWeight: 'bold',
-                color: 'blue',
-                alignSelf: 'flex-start',
+                color: 'black',
               }}>
-              Write a review
+              Rate this product
             </Text>
-          </Pressable>
-        </View>
+            <Text>
+              Review will be shown in public including the name and message.
+            </Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                marginVertical: 10,
+              }}>
+              {timesToIterate.map(item => {
+                return (
+                  <Pressable
+                    key={item}
+                    onPress={() => {
+                      setStarRating(item);
+                      setTimeout(() => {
+                        // place a setTimeout to see star being clicked first
+                        setShowReviewModal(true);
+                        setSaveStarRating(item);
+                      }, 500);
+                    }}>
+                    <Image
+                      source={starRating >= item ? star_solid : star_plain}
+                      style={{width: 35, height: 35}}
+                    />
+                  </Pressable>
+                );
+              })}
+            </View>
+            <Pressable onPress={() => setShowReviewModal(true)}>
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: 'bold',
+                  color: 'blue',
+                  alignSelf: 'flex-start',
+                }}>
+                Write a review
+              </Text>
+            </Pressable>
+          </View>
+        )}
       </View>
     );
   };
@@ -146,9 +248,9 @@ const ProductDetail = ({ route }) => {
           <View style={{flex: 1, paddingRight: 25}}>
             {[
               { ratingNum: 5, percent: `${productReview?.five_star}%`  },
-              { ratingNum: 4, percent: `${productReview?.two_star}%`   },
+              { ratingNum: 4, percent: `${productReview?.four_star}%`   },
               { ratingNum: 3, percent: `${productReview?.three_star}%` },
-              { ratingNum: 2, percent: `${productReview?.four_star}%`  },
+              { ratingNum: 2, percent: `${productReview?.two_star}%`  },
               { ratingNum: 1, percent: `${productReview?.one_star}%`   },
             ].map(item => {
               return (
@@ -187,39 +289,44 @@ const ProductDetail = ({ route }) => {
           productReview.reviews.map(review => {
             return (
               <View key={review._id} style={{padding: 5}}>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <Icon
-                    name="user"
-                    color="grey"
-                    size={25}
-                    style={{marginHorizontal: 5}}
-                  />
-                  <Text>
-                    {review.user_id.given_name} {review.user_id.last_name}
-                  </Text>
-                </View>
-                <View style={{padding: 5}}>
-                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    {timesToIterate.map(item => {
-                      return (
-                        <Pressable key={item}>
-                          <Image
-                            source={
-                              review.product_rating >= item
-                                ? star_solid
-                                : star_plain
-                            }
-                            style={{width: 12, height: 12, margin: 1}}
-                          />
-                        </Pressable>
-                      );
-                    })}
-                    <Text style={{marginLeft: 5}}>
-                      {new Date(review.comment_date).toLocaleDateString()}
-                    </Text>
-                  </View>
-                  <Text>{review.user_comment}</Text>
-                </View>
+                {review.user_id._id !== userData._id && (
+                  <>
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                      <Icon
+                        name="user"
+                        color="grey"
+                        size={25}
+                        style={{marginHorizontal: 5}}
+                      />
+                      <Text>
+                        {review.user_id.given_name} {review.user_id.last_name}
+                      </Text>
+                    </View>
+                    <View style={{padding: 5}}>
+                      <View
+                        style={{flexDirection: 'row', alignItems: 'center'}}>
+                        {timesToIterate.map(item => {
+                          return (
+                            <View key={item}>
+                              <Image
+                                source={
+                                  review.product_rating >= item
+                                    ? star_solid
+                                    : star_plain
+                                }
+                                style={{width: 12, height: 12, margin: 1}}
+                              />
+                            </View>
+                          );
+                        })}
+                        <Text style={{marginLeft: 5}}>
+                          {new Date(review.comment_date).toLocaleDateString()}
+                        </Text>
+                      </View>
+                      <Text>{review.user_comment}</Text>
+                    </View>
+                  </>
+                )}
               </View>
             );
           })
@@ -241,9 +348,14 @@ const ProductDetail = ({ route }) => {
   return (
     <View style={styles.container}>
       <RateProductModal
+        product_id={product._id}
+        user_id={userData._id}
         isVisible={showReviewModal}
+        userCurrentReview={userReview}
         userStarRating={saveStarRating}
+        submitEditReview={submitEditReview}
         setShowReviewModal={setShowReviewModal}
+        setSubmitEditReview={setSubmitEditReview}
       />
       <ScrollView>
         <View style={{paddingBottom: 15}}>
@@ -338,9 +450,9 @@ const ProductDetail = ({ route }) => {
           </View>
         </View>
 
-        <UserReviewContainer />
         {isDoneGetComment ? (
           <>
+            <UserReviewContainer />
             <RatingsAndReview />
             <CommentSection />
           </>
@@ -351,7 +463,7 @@ const ProductDetail = ({ route }) => {
               justifyContent: 'center',
               alignItems: 'center',
             }}>
-            <Text style={{ fontSize: 17, fontWeight: "bold" }}>Loading...</Text>
+            <Text style={{fontSize: 17, fontWeight: 'bold'}}>Loading...</Text>
           </View>
         )}
       </ScrollView>
@@ -367,13 +479,13 @@ const ProductDetail = ({ route }) => {
         </Pressable>
         <Pressable
           style={styles.cartBtn}
-          onPress={() => dispatch(addToCart(product))}>
+          onPress={() => dispatch(addToCart({product, itemQuantity}))}>
           <Icon name="cart-plus" size={25} color="white" />
           <Text style={styles.textTab}>Add to cart</Text>
         </Pressable>
         <Pressable
           style={styles.buyBtn}
-          onPress={() => dispatch(addToCart(product))}>
+          onPress={() => dispatch(addToCart({product, itemQuantity}))}>
           <Text style={styles.textTab}>Buy Now</Text>
         </Pressable>
       </View>
