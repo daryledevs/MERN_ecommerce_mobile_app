@@ -45,11 +45,7 @@ const product_reviews = async (req, res) =>{
         break;
     }
   }
-  console.log(
-    five_star,
-    five_star / total_review || (0).toFixed(2),
-    ((five_star / total_review) * 100).toFixed(2) || 0
-  );
+
   res.status(200).send({
     reviews: reviews,
     total_review: total_review,
@@ -92,8 +88,27 @@ const user_review = async (req, res) => {
     });
 };
 
+const edit_review = async (req, res) => {
+  const { review_id } = req.params;
+  const { product_rating, user_comment } = req.body;
 
-const delete_review = async(req, res) =>{
+  Review.findOneAndUpdate(
+    { _id: review_id },
+    { product_rating: product_rating, user_comment: user_comment },
+    { new: true }
+  )
+    .then(async (edit_user_review) => {
+      if(!edit_user_review) return res.status(404).send("Review not found");
+      res.status(200).send("Edit successfully");
+    })
+    .catch((error) => {
+      res
+        .status(500)
+        .send({ message: "Edit user review failed", error: error.message });
+    });
+};
+
+const delete_review = async (req, res) =>{
   const { review_id } = req.params;
   Review.findOneAndDelete({ review_id })
     .then(() => {
@@ -106,6 +121,7 @@ const delete_review = async(req, res) =>{
 
 module.exports = {
   user_review,
-  product_reviews,
+  edit_review,
   delete_review,
+  product_reviews,
 };
