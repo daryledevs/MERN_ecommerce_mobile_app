@@ -1,58 +1,60 @@
 const mongoose = require("mongoose");
 
 const orderSchema = mongoose.Schema({
-  product_id:{
+  product_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Product",
     required: true,
   },
 
-  user_id:{
+  user_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
   },
 
-  quantity:{
+  quantity: {
     type: Number,
-    default: null,
     required: true,
   },
 
-  date_ordered:{
-    type: Date,
-    default:  new Date.now(),
+  date_ordered: {
+    type: Number,
+    default: Date.now(),
   },
 
-  date_shipment_arrival: Date,
+  date_shipment_arrival: {
+    type: Number,
+    default: Date.now(),
+  },
 
-  shipped_place:{
+  shipped_place: {
     house_number: {
       type: Number,
       default: null,
     },
-  
+
     street: {
       type: String,
       default: "",
     },
-    
-    subdivision:{
+
+    subdivision: {
       type: String,
       default: "",
     },
-  
+
     district: {
       type: String,
       default: "",
     },
-  
+
     city: {
       type: String,
       default: "",
     },
-  
-    province:{
+
+    province: {
       type: String,
       default: "",
     },
