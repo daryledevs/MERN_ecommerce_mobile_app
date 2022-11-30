@@ -12,6 +12,7 @@ import star_plain from '../../asset/image/star_plain.png';
 import star_solid from '../../asset/image/star_solid.png';
 import star_half from '../../asset/image/star_half.png';
 import RateProductModal from '../../shared/modal/RateProductModal';
+import LoadingScreen from '../../shared/loading/LoadingScreen';
 
 const ProductDetail = ({ route }) => {
   const { product } = route.params;
@@ -19,34 +20,13 @@ const ProductDetail = ({ route }) => {
   const userData = useSelector(UserDetails);
   const [isInWishlist, setIsInWishlist] = useState(false);
   const [isDoneGetStatus, setIsDoneGetStatus] = useState(false);
+  const [isDoneGetComment, setIsDoneGetComment] = useState(false);
   const [starRating, setStarRating] = useState(0);
   const [saveStarRating, setSaveStarRating] = useState(0);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [productReview, setProductReview] = useState([]);
+  const [itemQuantity, setItemQuantity] = useState(1)
   const timesToIterate = [1, 2, 3, 4, 5];
- 
-  const reviewStats = [
-    {
-      ratingNum: 5,
-      percent: `${productReview.five_star}%`,
-    },
-    {
-      ratingNum: 4,
-      percent: `${productReview.two_star}%`,
-    },
-    {
-      ratingNum: 3,
-      percent: `${productReview.three_star}%`,
-    },
-    {
-      ratingNum: 2,
-      percent: `${productReview.four_star}%`,
-    },
-    {
-      ratingNum: 1,
-      percent: `${productReview.one_star}%`,
-    },
-  ];
 
   GetCurrentPage('Homepage');
   
@@ -54,12 +34,13 @@ const ProductDetail = ({ route }) => {
     api.get(`/likes/status/${product._id}/${userData._id}`)
     .then((res) => {
       setIsInWishlist(res.data.isLike);
-      api.get(`review/${product._id}`)
-      .then((res) => {
-        setProductReview(res.data);
-        setIsDoneGetStatus(true);
-      })
-    })
+      setIsDoneGetStatus(true);
+    });
+
+    api.get(`review/${product._id}`).then(res => {
+      setProductReview(res.data);
+      setIsDoneGetComment(true);
+    });
   }, []);
 
   useEffect(() => {
@@ -122,7 +103,7 @@ const ProductDetail = ({ route }) => {
         </View>
       </View>
     );
-  }
+  };
 
   const RatingsAndReview = () => {
     return (
@@ -163,7 +144,13 @@ const ProductDetail = ({ route }) => {
             <Text>{productReview.total_review}</Text>
           </View>
           <View style={{flex: 1, paddingRight: 25}}>
-            {reviewStats.map(item => {
+            {[
+              { ratingNum: 5, percent: `${productReview?.five_star}%`  },
+              { ratingNum: 4, percent: `${productReview?.two_star}%`   },
+              { ratingNum: 3, percent: `${productReview?.three_star}%` },
+              { ratingNum: 2, percent: `${productReview?.four_star}%`  },
+              { ratingNum: 1, percent: `${productReview?.one_star}%`   },
+            ].map(item => {
               return (
                 <View
                   key={item.ratingNum}
@@ -191,54 +178,66 @@ const ProductDetail = ({ route }) => {
         </View>
       </View>
     );
-  }
+  };
 
   const CommentSection = () => {
     return (
       <View style={styles.mainCommentSection}>
-        {productReview.reviews.map(review => {
-          return (
-            <View key={review._id} style={{padding: 5}}>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Icon
-                  name="user"
-                  color="grey"
-                  size={25}
-                  style={{marginHorizontal: 5}}
-                />
-                <Text>
-                  {review.user_id.given_name} {review.user_id.last_name}
-                </Text>
-              </View>
-              <View style={{padding: 5}}>
+        {productReview.reviews.length !== 0 ? (
+          productReview.reviews.map(review => {
+            return (
+              <View key={review._id} style={{padding: 5}}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  {timesToIterate.map(item => {
-                    return (
-                      <Pressable key={item}>
-                        <Image
-                          source={
-                            review.product_rating >= item
-                              ? star_solid
-                              : star_plain
-                          }
-                          style={{width: 12, height: 12, margin: 1}}
-                        />
-                      </Pressable>
-                    );
-                  })}
-                  <Text style={{marginLeft: 5}}>
-                    {new Date(review.comment_date).toLocaleDateString()}
+                  <Icon
+                    name="user"
+                    color="grey"
+                    size={25}
+                    style={{marginHorizontal: 5}}
+                  />
+                  <Text>
+                    {review.user_id.given_name} {review.user_id.last_name}
                   </Text>
                 </View>
-                <Text>{review.user_comment}</Text>
+                <View style={{padding: 5}}>
+                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    {timesToIterate.map(item => {
+                      return (
+                        <Pressable key={item}>
+                          <Image
+                            source={
+                              review.product_rating >= item
+                                ? star_solid
+                                : star_plain
+                            }
+                            style={{width: 12, height: 12, margin: 1}}
+                          />
+                        </Pressable>
+                      );
+                    })}
+                    <Text style={{marginLeft: 5}}>
+                      {new Date(review.comment_date).toLocaleDateString()}
+                    </Text>
+                  </View>
+                  <Text>{review.user_comment}</Text>
+                </View>
               </View>
-            </View>
-          );
-        })}
+            );
+          })
+        ) : (
+          <View style={{
+            height: 70,
+            justifyContent: "center",
+            alignItems: "center",
+          }}>
+            <Text style={{ fontSize: 15, fontWeight: "bold" }}>No other reviews yet...</Text>
+            <Text style={{ fontSize: 17, fontWeight: "bold" }}>Be the first one to give review!</Text>
+          </View>
+        )}
       </View>
     );
-  }
-  if(!isDoneGetStatus) return <></>;
+  };
+
+  if(!isDoneGetStatus) return <LoadingScreen />;
   return (
     <View style={styles.container}>
       <RateProductModal
@@ -260,12 +259,77 @@ const ProductDetail = ({ route }) => {
               paddingHorizontal: 10,
               borderColor: 'gray',
             }}>
-            <Text>
-              Seller:{' '}
-              {product.product_seller ? product.product_seller : 'NO NAME'}
-            </Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}>
+              <Text>
+                Seller:{' '}
+                {product.product_seller ? product.product_seller : 'NO NAME'}
+              </Text>
+              <View style={{justifyContent: 'center', marginLeft: 'auto'}}>
+                <Text style={{fontSize: 11, textAlign: 'center'}}>
+                  QTY: {product.quantity_stock}
+                </Text>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    backgroundColor: 'white',
+                  }}>
+                  <Pressable
+                    onPress={() =>
+                      itemQuantity > 1
+                        ? setItemQuantity(prev => prev - 1)
+                        : null
+                    }
+                    style={{
+                      borderWidth: 1,
+                      borderColor: '#ccc',
+                      padding: 5,
+                      alignSelf: 'center',
+                    }}>
+                    <Icon
+                      name="minus"
+                      size={20}
+                      style={{marginHorizontal: 5}}
+                    />
+                  </Pressable>
+                  <View
+                    style={{
+                      flexDirection: 'column',
+                      borderWidth: 1,
+                      borderColor: '#ccc',
+                      alignItems: 'center',
+                    }}>
+                    <Text
+                      style={{
+                        fontSize: 20,
+                        width: 40,
+                        textAlign: 'center',
+                        alignSelf: 'center',
+                      }}>
+                      {itemQuantity}
+                    </Text>
+                  </View>
+                  <Pressable
+                    onPress={() =>
+                      itemQuantity < product.quantity_stock
+                        ? setItemQuantity(prev => prev + 1)
+                        : null
+                    }
+                    style={{
+                      borderWidth: 1,
+                      borderColor: '#ccc',
+                      padding: 5,
+                      alignSelf: 'center',
+                    }}>
+                    <Icon name="plus" size={20} style={{marginHorizontal: 5}} />
+                  </Pressable>
+                </View>
+              </View>
+            </View>
             <Text style={styles.title}>Description</Text>
-            <Text>Quantity: {product.quantity_stock}</Text>
             <Text>
               {product.description.length === 0
                 ? 'No description for this product.'
@@ -273,9 +337,23 @@ const ProductDetail = ({ route }) => {
             </Text>
           </View>
         </View>
-        { UserReviewContainer() }
-        { RatingsAndReview() }
-        { CommentSection() }
+
+        <UserReviewContainer />
+        {isDoneGetComment ? (
+          <>
+            <RatingsAndReview />
+            <CommentSection />
+          </>
+        ) : (
+          <View
+            style={{
+              height: 121,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Text style={{ fontSize: 17, fontWeight: "bold" }}>Loading...</Text>
+          </View>
+        )}
       </ScrollView>
       <View style={styles.buttonContainer}>
         <Pressable
