@@ -6,7 +6,7 @@ const { User } = require("../model/User");
 const product_reviews = async (req, res) =>{
   const { product_id } = req.params;
   const reviews = await Review.find({ product_id }).populate("user_id");
-  const total_review = await Review.find({ product_id }).estimatedDocumentCount();
+  const total_review = reviews.length;
 
   let one_star = 0,
     two_star = 0,
@@ -43,21 +43,22 @@ const product_reviews = async (req, res) =>{
         five_star += 1;
         star_value += 5;
         break;
-
-      default:
-        break;
     }
   }
-
+  console.log(
+    five_star,
+    five_star / total_review || (0).toFixed(2),
+    ((five_star / total_review) * 100).toFixed(2) || 0
+  );
   res.status(200).send({
     reviews: reviews,
     total_review: total_review,
-    total_ratings: (star_value / total_review).toFixed(1),
-    five_star:  ((five_star / total_review)  * 100).toFixed(2),
-    four_star:  ((four_star / total_review)  * 100).toFixed(2),
-    three_star: ((three_star / total_review) * 100).toFixed(2),
-    two_star:   ((two_star / total_review)   * 100).toFixed(2),
-    one_star:   ((one_star / total_review)   * 100).toFixed(2),
+    total_ratings: ((star_value / total_review)  || 0).toFixed(1),
+    five_star:     (((five_star / total_review)  || 0)  * 100).toFixed(2),
+    four_star:     (((four_star / total_review)  || 0)  * 100).toFixed(2),
+    three_star:    (((three_star / total_review) || 0)  * 100).toFixed(2),
+    two_star:      (((two_star / total_review)   || 0)  * 100).toFixed(2),
+    one_star:      (((one_star / total_review)   || 0)  * 100).toFixed(2),
   });
 };
 
