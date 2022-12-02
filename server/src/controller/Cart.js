@@ -39,14 +39,36 @@ const addToCart = async (req, res) => {
 };
 
 
+const productCartQuantity = async (req, res) => {
+   const { product_id, user_id } = req.params;
+   const { quantity } = req.body;
+   Cart.findOneAndUpdate(
+     { product_id, user_id },
+     { product_id, user_id, quantity: quantity },
+     { new: true }
+   )
+     .populate("product_id")
+     .then((item) => {
+      res.status(200).send(item)
+     })
+     .catch((error) => {
+       res.status(500).send({
+         message: "Update product quantity failed",
+         error: error.message,
+       });
+     });
+};
+
 const removeCart = async (req, res)=> {
-  const { cart_id } = req.params;
-  Cart.findOneAndDelete(cart_id)
+  const { product_id, user_id } = req.params;
+  Cart.findOneAndDelete({ product_id, user_id })
     .then(() => {
       res.status(200).send("Item has been removed from cart");
     })
     .catch((error) => {
-      res.status(500).send({ error: error.message, message: "Remove item failed" });
+      res
+        .status(500)
+        .send({ error: error.message, message: "Remove item failed" });
     });
 };
 
@@ -54,4 +76,5 @@ module.exports = {
   getUserCart,
   addToCart,
   removeCart,
+  productCartQuantity,
 };
