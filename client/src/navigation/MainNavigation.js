@@ -18,7 +18,7 @@ import {
 import FirstBootLoading from '../shared/loading/FirstBootLoading';
 import { getUserInfoByToken } from '../redux/action/User';
 import UserProfile from '../user/page/UserProfile';
-import { cartData } from '../redux/reducer/Cart';
+import { cartData, FetchCartStatus } from '../redux/reducer/Cart';
 import AuthNavigator from './AuthNavigator';
 import HomeNavigator from './Home';
 import CartNavigator from './Cart';
@@ -50,6 +50,7 @@ const MainNavigation = () => {
   const goodByeLoading = useSelector(GoodByeLoadingState);
   const fetchProductStatus = useSelector(FetchProductStatus);
   const fetchWishlistStatus = useSelector(FetchWishlistStatus);
+  const fetchCartStatus = useSelector(FetchCartStatus);
 
   function fetchFailed(){
     dispatch(product_fetchFailed());
@@ -88,7 +89,8 @@ const MainNavigation = () => {
   if (
     !fetchProductStatus.doneGetProduct ||
     !fetchProductStatus.doneGetCategory ||
-    !fetchWishlistStatus || isLoading 
+    !fetchWishlistStatus || !fetchCartStatus ||
+    isLoading 
   ) return <FirstBootLoading />;
 
   if(goodByeLoading) return <GoodByeLoading isVisible={goodByeLoading} />;
