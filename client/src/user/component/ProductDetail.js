@@ -479,13 +479,17 @@ const ProductDetail = ({ route }) => {
         </Pressable>
         <Pressable
           style={styles.cartBtn}
-          onPress={() => dispatch(addToCart({product, itemQuantity}))}>
+          onPress={() =>
+            dispatch(addToCart({product, itemQuantity, user_id: userData._id}))
+          }>
           <Icon name="cart-plus" size={25} color="white" />
           <Text style={styles.textTab}>Add to cart</Text>
         </Pressable>
         <Pressable
           style={styles.buyBtn}
-          onPress={() => dispatch(addToCart({product, itemQuantity}))}>
+          onPress={() =>
+            dispatch(addToCart({product, itemQuantity, user_id: userData._id}))
+          }>
           <Text style={styles.textTab}>Buy Now</Text>
         </Pressable>
       </View>
