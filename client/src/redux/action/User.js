@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getAllProducts, getAllCategories } from "../action/Product";
 import api from '../../asset/api';
 import { getUserLikes } from "./Wishlist";
+import { getAllUserCart } from "./Cart";
 
 export const userLogin = createAsyncThunk(
   'user/userLogin',
@@ -34,6 +35,8 @@ export const getUserInfoByToken = createAsyncThunk(
       dispatch(getAllProducts());
       dispatch(getAllCategories());
       dispatch(getUserLikes(response.data._id));
+      dispatch(getAllUserCart(response.data._id));
+      
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
