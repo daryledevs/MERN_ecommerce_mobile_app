@@ -18,6 +18,7 @@ const user = require("./src/route/User");
 const like = require("./src/route/Wishlist");
 const review = require("./src/route/Review");
 const cart = require("./src/route/Cart");
+const address = require("./src/route/UserAddress");
 
 // for testing
 app.get(`${API}/hello`, (req, res) => {
@@ -31,6 +32,7 @@ app.use(`${API}/users`, user);
 app.use(`${API}/likes`, like);
 app.use(`${API}/review`, review);
 app.use(`${API}/cart`, cart);
+app.use(`${API}/user-address`, address);
 
 // database
 mongoose.connect(process.env.CONNECTION_URL, {
