@@ -46,9 +46,9 @@ const userSchema = mongoose.Schema({
     default: "",
   },
 
-  district: {
-    type: String,
-    default: "",
+  barangay: {
+    type: Number,
+    default: null,
   },
 
   city: {

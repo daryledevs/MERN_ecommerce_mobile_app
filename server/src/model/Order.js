@@ -44,7 +44,7 @@ const orderSchema = mongoose.Schema({
       default: "",
     },
 
-    district: {
+    barangay: {
       type: String,
       default: "",
     },
