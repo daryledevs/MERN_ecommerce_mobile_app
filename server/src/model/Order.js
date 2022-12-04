@@ -29,35 +29,9 @@ const orderSchema = mongoose.Schema({
   },
 
   shipped_place: {
-    house_number: {
-      type: Number,
-      default: null,
-    },
-
-    street: {
-      type: String,
-      default: "",
-    },
-
-    subdivision: {
-      type: String,
-      default: "",
-    },
-
-    barangay: {
-      type: String,
-      default: "",
-    },
-
-    city: {
-      type: String,
-      default: "",
-    },
-
-    province: {
-      type: String,
-      default: "",
-    },
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Address",
+    required: true
   },
 });
 

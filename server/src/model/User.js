@@ -31,41 +31,11 @@ const userSchema = mongoose.Schema({
     default: false,
   },
 
-  house_number: {
-    type: Number,
-    default: null,
-  },
-
-  street: {
-    type: String,
-    default: "",
+  address_id:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Address"
   },
   
-  subdivision:{
-    type: String,
-    default: "",
-  },
-
-  barangay: {
-    type: Number,
-    default: null,
-  },
-
-  city: {
-    type: String,
-    default: "",
-  },
-
-  province:{
-    type: String,
-    default: "",
-  },
-
-  zip: {
-    type: String,
-    default: "",
-  },
-
   creation_time: {
     type: Number,
     default: null
