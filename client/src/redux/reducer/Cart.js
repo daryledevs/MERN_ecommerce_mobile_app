@@ -8,7 +8,7 @@ import {
 
 const initialState = {
   item_cart: [],
-  doneGetWishlist: false,
+  doneGetCart: false,
 };
 
 
@@ -19,28 +19,33 @@ const cartSlice = createSlice({
     addToCart: addToCartAction,
     removeFromCart: removeFromCartAction,
     adjustQuantity: (state, actions) => {
-      const { isIncrease, product_id, itemQuantity, user_id } = actions.payload;
-      let itemCart = state.item_cart?.find(item => item.product_id === product_id);
+      const {isIncrease, product_id, itemQuantity, user_id} = actions.payload;
+      let itemCart = state.item_cart?.find(
+        item => item.product_id === product_id,
+      );
 
-      if(isIncrease) itemCart.quantity += itemQuantity;
+      if (isIncrease) itemCart.quantity += itemQuantity;
       else itemCart.quantity -= itemQuantity;
 
-       api
-         .put(`/cart/${product_id}/${user_id}`, {quantity: itemCart.quantity})
-         .then(() => {
-           console.log('Product quantity updated');
-         });
+      api
+        .put(`/cart/${product_id}/${user_id}`, {quantity: itemCart.quantity})
+        .then(() => {
+          console.log('Product quantity updated');
+        });
+    },
+    cart_fetchFailed: (state, action) =>{
+      state.doneGetCart = true;
     }
   },
-  extraReducers(builder){
+  extraReducers(builder) {
     builder.addCase(getAllUserCart.pending, (state, actions) => {
-      state.doneGetWishlist = false;
+      state.doneGetCart = false;
     });
 
     builder.addCase(getAllUserCart.fulfilled, (state, actions) => {
-      const cartData  = actions.payload.carts;
+      const cartData = actions.payload.carts;
       let sort = [];
-      
+
       for (let i = 0; i < cartData.length; i++) {
         sort.push({
           cart_id: cartData[i]._id,
@@ -50,15 +55,15 @@ const cartSlice = createSlice({
           quantity: cartData[i].quantity,
           quantity_stock: cartData[i].product_id.quantity_stock,
         });
-      };
+      }
 
-      state.doneGetWishlist = true;
+      state.doneGetCart = true;
       state.item_cart = [...sort];
     });
-  }
+  },
 });
 
-export const { addToCart, removeFromCart, adjustQuantity } = cartSlice.actions;
+export const { addToCart, removeFromCart, adjustQuantity, cart_fetchFailed } = cartSlice.actions;
 export const cartData = (state) => state.cart.item_cart;
-export const FetchCartStatus = (state) => state.cart.doneGetWishlist;
+export const FetchCartStatus = (state) => state.cart.doneGetCart;
 export default cartSlice.reducer;

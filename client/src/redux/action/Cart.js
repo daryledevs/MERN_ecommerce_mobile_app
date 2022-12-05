@@ -50,6 +50,7 @@ export const addToCartAction = (state, action) => {
           name: product.name,
           price: product.price,
           quantity: itemQuantity,
+          quantity_stock: product.quantity_stock
         },
       ],
     };
