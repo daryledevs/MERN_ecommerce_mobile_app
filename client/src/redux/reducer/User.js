@@ -2,22 +2,28 @@ import { createSlice } from "@reduxjs/toolkit";
 import { userLogin, getUserInfoByToken, userLogoutAction } from "../action/User";
 
 const initialState = {
-  userDetails: {
+  user_details: {
     _id: '',
     given_name: '',
     last_name: '',
     email: '',
     phone: '',
+    address_id: '',
     isAdmin: '',
-    house_number: '',
-    street: '',
-    subdivision: '',
-    district: '',
-    city: '',
-    zip: '',
     creation_time: null,
     last_time_sign_in: null,
   },
+  user_address: [
+    {
+      _id: '',
+      house_number: '',
+      street: '',
+      barangay: '',
+      subdivision: '',
+      city: '',
+      zip_code: '',
+    },
+  ],
   isToken: false,
   isLoading: true,
   goodByeLoading: false,
@@ -38,18 +44,23 @@ const userSlice = createSlice({
       state.goodByeLoading = false;
     },
     userLogout: userLogoutAction,
+    addNewAddress: (state, action) => {
+      console.log('PAYLOAD: ', action.payload);
+      state.user_address.push(action.payload);
+    }
   },
   extraReducers(builder) {
 
     builder.addCase(getUserInfoByToken.fulfilled, (state, action) => {
-      console.log('getUserInfoByToken: fulfilled');
+      console.log('getUserInfoByToken: fulfilled', action.payload);
       return {
         ...state,
-        userDetails: action.payload,
+        user_details: action.payload.user_details,
+        user_address: action.payload.user_address,
         isToken: true,
         isLoading: false,
         loginTriggers: false,
-        loginError: "",
+        loginError: '',
       };
     });
 
@@ -80,9 +91,10 @@ const userSlice = createSlice({
 export const IsToken = (state) => state.user.isToken;
 export const Loading = (state) => state.user.isLoading;
 export const LoginError = (state) => state.user.loginError;
-export const UserDetails = (state) => state.user.userDetails;
+export const UserDetails = (state) => state.user.user_details;
+export const UserAddress = (state) => state.user.user_address;
 export const LoginTriggers = (state) => state.user.loginTriggers;
 export const GoodByeLoadingState = (state) => state.user.goodByeLoading;
 
-export const { userLogout, tokenIsNull, error_cleanup } = userSlice.actions;
+export const { userLogout, tokenIsNull, error_cleanup, addNewAddress } = userSlice.actions;
 export default userSlice.reducer;

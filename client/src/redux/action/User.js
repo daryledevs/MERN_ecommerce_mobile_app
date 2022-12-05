@@ -34,8 +34,8 @@ export const getUserInfoByToken = createAsyncThunk(
       
       dispatch(getAllProducts());
       dispatch(getAllCategories());
-      dispatch(getUserLikes(response.data._id));
-      dispatch(getAllUserCart(response.data._id));
+      dispatch(getUserLikes(response.data.user_details._id));
+      dispatch(getAllUserCart(response.data.user_details._id));
       
       return response.data;
     } catch (error) {
@@ -55,10 +55,10 @@ export const userLogoutAction = (state, action) => {
     isAdmin: '',
     house_number: '',
     street: '',
+    barangay: '',
     subdivision: '',
-    district: '',
     city: '',
-    zip: '',
+    zip_code: '',
     creation_time: null,
     last_time_sign_in: null,
   };
