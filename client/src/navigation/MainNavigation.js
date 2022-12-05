@@ -18,7 +18,7 @@ import {
 import FirstBootLoading from '../shared/loading/FirstBootLoading';
 import { getUserInfoByToken } from '../redux/action/User';
 import UserProfile from '../user/page/UserProfile';
-import { cartData, FetchCartStatus } from '../redux/reducer/Cart';
+import { cartData, cart_fetchFailed, FetchCartStatus } from '../redux/reducer/Cart';
 import AuthNavigator from './AuthNavigator';
 import HomeNavigator from './Home';
 import CartNavigator from './Cart';
@@ -55,6 +55,7 @@ const MainNavigation = () => {
   function fetchFailed(){
     dispatch(product_fetchFailed());
     dispatch(wishlist_fetchFailed());
+    dispatch(cart_fetchFailed());
   }
 
   useEffect(() => {
