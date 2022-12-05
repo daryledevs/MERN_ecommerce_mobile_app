@@ -1,6 +1,7 @@
 const { User } = require("../model/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { Address } = require("../model/UserAddress");
 
 const getAllUser = async (req, res) => {
   const userList = await User.find();
@@ -18,9 +19,14 @@ const getUserByToken = async (req, res) => {
 
     const { userId, isAdmin } = decode;
     const userList = await User.findById(userId).select("-passwordHash -__v");
+    const user_address = await Address.find({ user_id: userId });
 
     if (!userList) return res.status(404).send("User not found");
-    res.status(200).send(userList);
+    
+    res.status(200).send({ 
+      user_details: userList,
+      user_address: user_address
+    });
   });
 };
 

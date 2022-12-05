@@ -16,8 +16,13 @@ const addNewAddress = async (req, res) => {
   
   new_instance
     .save()
-    .then(() => {
-      res.status(200).send("Success adding new address");
+    .then((new_address) => {
+      res
+        .status(200)
+        .send({
+          message: "Success adding new address",
+          user_address: new_address,
+        });
     })
     .catch((error) => {
       res.status(500).send({ message: "Add new address failed", error: error.message });
