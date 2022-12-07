@@ -6,7 +6,7 @@ import {
   Button,
   Pressable,
 } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Icons from 'react-native-vector-icons/FontAwesome5';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
@@ -17,13 +17,20 @@ import placeholder from '../../asset/image/placeholder.png';
 import Header from '../../shared/others/Header';
 import { UserDetails } from '../../redux/reducer/User';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import ConfirmationModal from '../../shared/modal/ConfirmationModal';
+import SingleBtnModal from '../../shared/modal/SingleBtnModal';
 
 const Cart = () => {
   const cartData = useSelector(state => state.cart.item_cart);
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const userData = useSelector(UserDetails);
-  const [itemQuantity, setItemQuantity] = useState(1);
+  const [showModal, setShowModal] = useState(false);
+  const [removeItemName, setRemoveItemName] = useState("");
+  const [removeItemId, setRemoveItemId] = useState("");
+  const [isProductQtyMax, setIsProductQTYMax] = useState(false);
+  const [productTotalQty, setProductTotalQty] = useState(0);
+
   var total = 0;
   cartData.forEach(element => {
     total += element.price * element.quantity;
@@ -32,6 +39,31 @@ const Cart = () => {
   return (
     <>
       <Header />
+
+      {/* MODALs ARE HERE */}
+      <ConfirmationModal
+        showModal={showModal}
+        product_name={removeItemName}
+        CloseModal={() => setShowModal(false)}
+        Proceed={() => {
+          dispatch(
+            removeFromCart({
+              product_id: removeItemId,
+              user_id: userData._id,
+            }),
+          );
+          setShowModal(false);
+        }}
+        Cancel={() => setShowModal(false)}
+      />
+
+      <SingleBtnModal
+        showModal={isProductQtyMax}
+        CloseModal={() => setIsProductQTYMax(false)}
+        errorTitle="Maximum quantity reached "
+        errorMsg={`This item has a total of ${productTotalQty} quantities.`}
+      />
+
       {cartData.length !== 0 ? (
         <View style={{flex: 1, position: 'relative'}}>
           <SwipeListView
@@ -66,13 +98,9 @@ const Cart = () => {
                             );
                           } else {
                             console.log('LOWEST NUMBER');
-                            dispatch(
-                              removeFromCart({
-                                product_id: cart.item.product_id,
-                                user_id: userData._id,
-                              }),
-                            );
-                            // prompt modal or error here
+                            setRemoveItemId(cart.item.product_id);
+                            setRemoveItemName(cart.item.name);
+                            setShowModal(!showModal);
                           }
                         }}
                         style={{
@@ -117,7 +145,8 @@ const Cart = () => {
                             );
                           } else {
                             console.log('MAXIMUM NUMBER');
-                            // prompt modal or error here
+                            setIsProductQTYMax(true);
+                            setProductTotalQty(cart.item.quantity_stock);
                           }
                         }}
                         style={{
