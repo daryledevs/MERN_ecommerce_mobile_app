@@ -1,10 +1,49 @@
 const { Product } = require("../model/Product");
 const { Category } = require("../model/Category");
+const { Review } = require("../model/Review");
 const regex_removeWhiteSpaces = /\s/g;
 
 const getAllProducts = async (req, res) => {
-  const productList = await Product.find().populate("category");
-  if(!productList) return res.status(500).json({ success: false });
+  let productList = [];
+  await Product.find().populate("category")
+    .then(async (product) => {
+      if(!product) return res.status(500).json({message: "Product undefined", success: false });
+      for (let j = 0; j < product.length; j++) {
+        let star_value = 0;
+        const reviews = await Review.find({ product_id: product[j]._id });
+        const total_review = reviews.length;
+        for (let i = 0; i < reviews.length; i++) {
+          switch (reviews[i].product_rating) {
+            case 1:
+              star_value += 1;
+              break;
+
+            case 2:
+              star_value += 2;
+              break;
+
+            case 3:
+              star_value += 3;
+              break;
+
+            case 4:
+              star_value += 4;
+              break;
+
+            case 5:
+              star_value += 5;
+              break;
+          }
+        }
+
+        productList.push({
+          product: product[j],
+          total_review: total_review,
+          total_ratings: (star_value / total_review || 0).toFixed(1),
+        });
+      }
+    })
+
   res.status(200).send(productList);
 };
 
