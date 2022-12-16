@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, Platform, BackHandler, Alert } from 'react-native';
 // packages
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Icon_2 from 'react-native-vector-icons/AntDesign';
@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 // components
 import {
+  dispatchLoading,
   error_cleanup,
   GoodByeLoadingState,
   IsToken,
@@ -31,6 +32,7 @@ import {
 import ErrorModal from '../shared/modal/ErrorModal';
 import { FetchWishlistStatus, wishlist_fetchFailed } from '../redux/reducer/Wishlist';
 import { ShowRoute } from '../redux/reducer/RouteNavigation';
+import { FetchOrderStatus } from '../redux/reducer/Order';
 
 const Tab = createBottomTabNavigator();
 
@@ -51,6 +53,35 @@ const MainNavigation = () => {
   const fetchProductStatus = useSelector(FetchProductStatus);
   const fetchWishlistStatus = useSelector(FetchWishlistStatus);
   const fetchCartStatus = useSelector(FetchCartStatus);
+  const fetchOrderStatus = useSelector(FetchOrderStatus);
+
+  useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', () => {
+      Alert.alert(
+        'Exit App',
+        'Do you want to exit?',
+        [
+          {
+            text: 'No',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
+          },
+          {
+            text: 'Yes',
+            onPress: () => {
+              BackHandler.exitApp();
+            },
+          },
+        ],
+        {cancelable: false},
+      );
+      return true;
+    });
+    return () => {
+      BackHandler.removeEventListener();
+    };
+  }, []);
+
 
   function fetchFailed(){
     dispatch(product_fetchFailed());
@@ -73,6 +104,7 @@ const MainNavigation = () => {
   }, [loginError]);
   
    useEffect(() => {
+     dispatch(dispatchLoading());
      AsyncStorage.getItem('token')
        .then(token => {
           console.log('AsyncStorage (token): ', token);
@@ -91,7 +123,7 @@ const MainNavigation = () => {
     !fetchProductStatus.doneGetProduct ||
     !fetchProductStatus.doneGetCategory ||
     !fetchWishlistStatus || !fetchCartStatus ||
-    isLoading 
+    !fetchOrderStatus || isLoading 
   ) return <FirstBootLoading />;
 
   if(goodByeLoading) return <GoodByeLoading isVisible={goodByeLoading} />;
@@ -123,14 +155,13 @@ const MainNavigation = () => {
           <Tab.Navigator
             initialRouteName="Home"
             screenOptions={{
-              KeyboardHidesTabBar: true,
               showLabel: false,
               activeTinColor: '#e91e63',
               headerShown: false,
               tabBarLabelStyle: {
                 fontSize: 13,
               },
-              tabBarStyle: { display: show_route ? 'none' : 'flex' }
+              tabBarStyle: {display: show_route ? 'none' : 'flex'},
             }}>
             <Tab.Screen
               name="Home"

@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack'
 // components
 import CartScreen from '../user/page/Cart';
-import CartCheckout from './CartCheckout';
+import CartCheckout from '../user/component/CartCheckout';
 import ResetHistory from '../util/ResetHistory';
 
 const Stack = createStackNavigator();
