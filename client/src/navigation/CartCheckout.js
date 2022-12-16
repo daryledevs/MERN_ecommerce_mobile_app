@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {createContext, useState} from 'react';
 import { StyleSheet, Text, View, Button } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import Shipping from '..//user/component/Shipping';
@@ -11,17 +11,34 @@ const Tab = createMaterialTopTabNavigator();
   
 const CartCheckout = () => {
   const user_address = useSelector(UserAddress);
+  const [changePaymentMethod, setChangePaymentMethod] = useState("Cash on Delivery");
   return (
     <Tab.Navigator
       screenListeners={({navigation, route}) => ({
-        tabPress: (event) => {
+        tabPress: event => {
           // console.log(route) // uncomment this to see the list of route
-          if(user_address.length < 0) return event.preventDefault();
+          if (user_address.length < 0) return event.preventDefault();
         },
       })}>
-      <Tab.Screen name="Shipping" swipeEnabled={false} component={Shipping} />
-      <Tab.Screen name="Payment" component={Payment} />
-      <Tab.Screen name="Confirm" component={Confirm} />
+      <Tab.Screen name="Delivery Address" component={Shipping} />
+      <Tab.Screen name="Payment Option">
+        {props => (
+          <Payment
+            {...props}
+            setChangePaymentMethod={setChangePaymentMethod}
+            changePaymentMethod={changePaymentMethod}
+          />
+        )}
+      </Tab.Screen>
+      <Tab.Screen name="Place Order">
+        {props => (
+          <Confirm
+            {...props}
+            setChangePaymentMethod={setChangePaymentMethod}
+            changePaymentMethod={changePaymentMethod}
+          />
+        )}
+      </Tab.Screen>
     </Tab.Navigator>
   );
 }

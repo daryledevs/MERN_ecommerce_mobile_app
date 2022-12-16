@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, FlatList } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  Pressable,
+  TouchableOpacity,
+} from 'react-native';
 import Icons from 'react-native-vector-icons/AntDesign';
 
-const Payment = () => {
-  
-  const paymentList = ['Cash on Delivery', 'Bank Transfer', 'Card Payment'];
-  const paymentCards = ['Wallet', 'Visa', 'Master Card', 'Other'];
-  const [masterCardTrigger, setMasterCardTrigger] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState(paymentList[0]);
-  const [cardPayment, setCardPayment] = useState('Choose');
+const Payment = ({ changePaymentMethod, setChangePaymentMethod }) => {
+  const paymentList = ['Cash on Delivery', 'Card Payment'];
+  const paymentCards = ['Visa', 'Master Card', 'Discover'];
 
   return (
     <View style={styles.paymentContainer}>
@@ -18,30 +20,37 @@ const Payment = () => {
         renderItem={({item, index}) => {
           return (
             <TouchableOpacity
-              disabled={index === 2 ? true : false}
               key={index}
               onPress={() => {
-                setMasterCardTrigger(false);
-                setPaymentMethod(item);
+                setChangePaymentMethod(item);
               }}>
-              <View style={[
+              <View
+                style={[
                   styles.paymentMethod,
-                  { backgroundColor: paymentMethod === item ? 'blue' : 'white' },
+                  {
+                    backgroundColor:
+                      changePaymentMethod === item ? 'blue' : 'white',
+                  },
                 ]}>
-                <Text style={[
-                    styles.text, {
-                      color: paymentMethod === item ? 'white' : 'black',
-                      flex: 1 },
+                <Text
+                  style={[
+                    styles.text,
+                    {
+                      color: changePaymentMethod === item ? 'white' : 'black',
+                      flex: 1,
+                    },
                   ]}>
                   {item}
                 </Text>
-                {index === 2 ? (
+                {/* PRESERVED  */}
+                {/* {index === 2 ? (
                   <TouchableOpacity
                     style={styles.cardPayment}
                     onPress={() => {
                       setPaymentMethod(paymentList[index]);
                       setMasterCardTrigger(!masterCardTrigger);
                     }}>
+                    
                     <View style={{flexDirection: 'row', alignItems: 'center'}}>
                       <Text
                         style={[styles.text, {flex: 1, textAlign: 'center'}]}>
@@ -71,7 +80,7 @@ const Payment = () => {
                       />
                     )}
                   </TouchableOpacity>
-                ) : null}
+                ) : null} */}
               </View>
             </TouchableOpacity>
           );
