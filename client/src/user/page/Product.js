@@ -46,7 +46,7 @@ const Product = () => {
 
   useEffect(() => {
     const filter = basedData.filter(product =>
-      product.name
+      product.product.name
         .toLowerCase()
         .replace(' ', '')
         .includes(search.toLowerCase().replace(' ', '')),
@@ -110,7 +110,7 @@ const Product = () => {
 
     const relatedCategory = basedData.filter(product =>
       chosenCategory.current.some(
-        ({categoryId}) => categoryId === product.category._id,
+        ({categoryId}) => categoryId === product.product.category._id,
       ),
     );
 
@@ -133,7 +133,9 @@ const Product = () => {
               keyExtractor={item => '_' + item._id}
               renderItem={({item}) => (
                 <TouchableOpacity
-                  onPress={() => categoryItem(item.name, item._id)}
+                  onPress={() =>
+                    categoryItem(item.name, item._id)
+                  }
                   style={{borderWidth: 1, marginBottom: 5}}>
                   <Text>{item.name}</Text>
                 </TouchableOpacity>
@@ -156,7 +158,7 @@ const Product = () => {
           </View>
         ) : (
           searchProduct.map(products => (
-            <SearchedProducts key={products._id + "_"} item={products} />
+            <SearchedProducts key={products.product._id + "_"} item={products} />
           ))
         )}
       </View>
@@ -216,7 +218,10 @@ const Product = () => {
                 flexWrap: 'wrap',
               }}>
               {products.map(product => (
-                <ProductCard key={product._id} product={product} />
+                <ProductCard
+                  key={product.product._id}
+                  product={product.product}
+                />
               ))}
             </View>
           )}
