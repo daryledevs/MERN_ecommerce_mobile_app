@@ -1,11 +1,11 @@
 const mongoose = require("mongoose");
 
 const orderSchema = mongoose.Schema({
-  product_id: {
+  order_item_id: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Product",
+    ref: "OrderItem",
     required: true,
-  },
+  }],
 
   user_id: {
     type: mongoose.Schema.Types.ObjectId,
@@ -13,8 +13,8 @@ const orderSchema = mongoose.Schema({
     required: true,
   },
 
-  quantity: {
-    type: Number,
+  payment_method:{
+    type: String,
     required: true,
   },
 
@@ -25,7 +25,7 @@ const orderSchema = mongoose.Schema({
 
   date_shipment_arrival: {
     type: Number,
-    default: Date.now(),
+    default: null,
   },
 
   shipped_place: {
