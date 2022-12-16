@@ -47,6 +47,9 @@ const userSlice = createSlice({
     addNewAddress: (state, action) => {
       console.log('PAYLOAD: ', action.payload);
       state.user_address.push(action.payload);
+    },
+    dispatchLoading: (state, action) => {
+      state.isLoading = true;
     }
   },
   extraReducers(builder) {
@@ -96,5 +99,5 @@ export const UserAddress = (state) => state.user.user_address;
 export const LoginTriggers = (state) => state.user.loginTriggers;
 export const GoodByeLoadingState = (state) => state.user.goodByeLoading;
 
-export const { userLogout, tokenIsNull, error_cleanup, addNewAddress } = userSlice.actions;
+export const { userLogout, tokenIsNull, error_cleanup, addNewAddress, dispatchLoading } = userSlice.actions;
 export default userSlice.reducer;

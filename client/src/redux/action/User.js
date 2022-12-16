@@ -4,6 +4,7 @@ import { getAllProducts, getAllCategories } from "../action/Product";
 import api from '../../asset/api';
 import { getUserLikes } from "./Wishlist";
 import { getAllUserCart } from "./Cart";
+import { get_all_orders } from "./Order";
 
 export const userLogin = createAsyncThunk(
   'user/userLogin',
@@ -36,6 +37,7 @@ export const getUserInfoByToken = createAsyncThunk(
       dispatch(getAllCategories());
       dispatch(getUserLikes(response.data.user_details._id));
       dispatch(getAllUserCart(response.data.user_details._id));
+      dispatch(get_all_orders(response.data.user_details._id));
       
       return response.data;
     } catch (error) {
