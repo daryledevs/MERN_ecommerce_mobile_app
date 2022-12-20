@@ -1,0 +1,15 @@
+{
+  "ordered_items": [
+    {
+      "product": "635a4121f47a4349bdab94bb",
+      "quantity": 10
+    },
+    {
+      "product": "635a412cf47a4349bdab94be",
+      "quantity": 10
+    }
+  ],
+  "user_id": "63618dc70b3cf28df7b077e1",
+  "payment_method": "Cash on delivery",
+  "address": "638cb371f403a5f029b18d04"
+}
