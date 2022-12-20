@@ -21,9 +21,24 @@ const userSchema = mongoose.Schema({
     required: true,
   },
 
+  gender: {
+    type: String,
+    default: "Male",
+  },
+
+  birthday: {
+    type: Number,
+    default: null,
+  },
+
   phone: {
     type: String,
     required: true,
+  },
+
+  image:{
+    type: String,
+    default: ""
   },
 
   isAdmin: {
@@ -31,14 +46,14 @@ const userSchema = mongoose.Schema({
     default: false,
   },
 
-  address_id:{
+  address_id: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Address"
+    ref: "Address",
   },
-  
+
   creation_time: {
     type: Number,
-    default: null
+    default: null,
   },
 
   last_time_sign_in: {
