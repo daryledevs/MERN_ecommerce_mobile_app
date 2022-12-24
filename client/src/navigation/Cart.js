@@ -18,7 +18,10 @@ const CartNavigator = () => {
         headerShown: false,
       }}>
       <Stack.Screen name="Cart Screen" component={CartScreen} />
-      <Stack.Screen name="Cart Checkout" component={CartCheckout} />
+      <Stack.Screen name="Cart Checkout" options={{
+        headerShown: true,
+        title: "Checkout"
+      }} component={CartCheckout} />
     </Stack.Navigator>
   );
 }
