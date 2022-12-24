@@ -50,7 +50,13 @@ const userSlice = createSlice({
     },
     dispatchLoading: (state, action) => {
       state.isLoading = true;
-    }
+    },
+    edit_profile: (state, action) => {
+      state.user_details = {
+        ...state.user_details,
+        ...action.payload
+      }
+    },
   },
   extraReducers(builder) {
 
@@ -99,5 +105,12 @@ export const UserAddress = (state) => state.user.user_address;
 export const LoginTriggers = (state) => state.user.loginTriggers;
 export const GoodByeLoadingState = (state) => state.user.goodByeLoading;
 
-export const { userLogout, tokenIsNull, error_cleanup, addNewAddress, dispatchLoading } = userSlice.actions;
+export const {
+  userLogout,
+  tokenIsNull,
+  error_cleanup,
+  addNewAddress,
+  dispatchLoading,
+  edit_profile,
+} = userSlice.actions;
 export default userSlice.reducer;
