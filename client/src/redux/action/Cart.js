@@ -21,10 +21,9 @@ export const getAllUserCart = createAsyncThunk(
 
 export const addToCartAction = (state, action) => {
   let {product, itemQuantity, user_id} = action.payload;
-  
-  if (state.item_cart?.some(element => element.product_id === product._id)) {
+  if (state.item_cart?.some(element => element.product_id._id === product._id)) {
     let itemCart = state.item_cart?.find(
-      item => item.product_id === product._id,
+      item => item.product_id._id === product._id,
     );
     itemCart.quantity += itemQuantity;
 
@@ -46,11 +45,10 @@ export const addToCartAction = (state, action) => {
       item_cart: [
         ...state.item_cart,
         {
-          product_id: product._id,
-          name: product.name,
-          price: product.price,
           quantity: itemQuantity,
-          quantity_stock: product.quantity_stock
+          product_id: {
+            ...product,
+          },
         },
       ],
     };
@@ -61,10 +59,10 @@ export const removeFromCartAction = (state, action) => {
   const { product_id, user_id } = action.payload;
 
   const filtered_state = state.item_cart.filter(
-    filter => filter.product_id !== product_id,
+    filter => filter.product_id._id !== product_id,
   );
+  
   state.item_cart =  filtered_state;
-  console.log(state.item_cart);
 
   api.delete(`/cart/${product_id}/${user_id}`)
     .then((res) => {

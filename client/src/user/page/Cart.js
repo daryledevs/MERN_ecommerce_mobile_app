@@ -33,9 +33,9 @@ const Cart = () => {
 
   var total = 0;
   cartData.forEach(element => {
-    total += element.price * element.quantity;
+    total += element.product_id.price * element.quantity;
   });
-
+  
   return (
     <>
       <Header />
@@ -73,12 +73,12 @@ const Cart = () => {
             rightOpenValue={-80}
             disableRightSwipe={true}
             data={cartData}
-            keyExtractor={item => item.product_id}
-            renderItem={(cart, rowMap) => {
+            keyExtractor={item => `${item._id}_${Date.now()}`}
+            renderItem={({item}, rowMap) => {
               return (
                 <View style={styles.cartContainer}>
                   <Image style={{width: 45, height: 45}} source={placeholder} />
-                  <Text style={styles.name}>{cart.item.name}</Text>
+                  <Text style={styles.name}>{item.product_id.name}</Text>
                   <View style={{marginLeft: 'auto'}}>
                     <View
                       style={{
@@ -87,19 +87,19 @@ const Cart = () => {
                       }}>
                       <Pressable
                         onPress={() => {
-                          if (cart.item.quantity > 1) {
+                          if (item.quantity > 1) {
                             dispatch(
                               adjustQuantity({
                                 isIncrease: false,
-                                product_id: cart.item.product_id,
+                                product_id: item,
                                 itemQuantity: 1,
                                 user_id: userData._id,
                               }),
                             );
                           } else {
                             console.log('LOWEST NUMBER');
-                            setRemoveItemId(cart.item.product_id);
-                            setRemoveItemName(cart.item.name);
+                            setRemoveItemId(item.product_id._id);
+                            setRemoveItemName(item.product_id.name);
                             setShowModal(!showModal);
                           }
                         }}
@@ -129,16 +129,16 @@ const Cart = () => {
                             textAlign: 'center',
                             alignSelf: 'center',
                           }}>
-                          {cart.item.quantity ? `${cart.item.quantity}x` : null}
+                          {item.quantity ? `${item.quantity}x` : null}
                         </Text>
                       </View>
                       <Pressable
                         onPress={() => {
-                          if (cart.item.quantity < cart.item.quantity_stock) {
+                          if (item.quantity < item.product_id.quantity_stock) {
                             dispatch(
                               adjustQuantity({
                                 isIncrease: true,
-                                product_id: cart.item.product_id,
+                                product_id: item,
                                 itemQuantity: 1,
                                 user_id: userData._id,
                               }),
@@ -146,7 +146,7 @@ const Cart = () => {
                           } else {
                             console.log('MAXIMUM NUMBER');
                             setIsProductQTYMax(true);
-                            setProductTotalQty(cart.item.quantity_stock);
+                            setProductTotalQty(item.product_id.quantity_stock);
                           }
                         }}
                         style={{
@@ -164,27 +164,27 @@ const Cart = () => {
                     </View>
                   </View>
                   <Text style={styles.price}>
-                    ₱{cart.item.quantity * cart.item.price}
+                    ₱{item.quantity * item.product_id.price}
                   </Text>
                 </View>
               );
             }}
-            renderHiddenItem={(data, rowMap) => (
-              <View style={styles.hiddenContainer}>
-                <TouchableOpacity
-                  style={styles.hiddenButton}
-                  onPress={() =>
-                    dispatch(
-                      removeFromCart({
-                        product_id: data.item.product_id,
-                        user_id: userData._id,
-                      }),
-                    )
-                  }>
-                  <Icons name="trash" color={'white'} size={30} />
-                </TouchableOpacity>
-              </View>
-            )}
+            renderHiddenItem={({item}, index) => {
+              return (
+                <View style={styles.hiddenContainer} key={index}>
+                  <TouchableOpacity
+                    style={styles.hiddenButton}
+                    onPress={() => {
+                        setRemoveItemId(item.product_id._id);
+                        setRemoveItemName(item.product_id.name);
+                        setShowModal(!showModal);
+                      }
+                    }>
+                    <Icons name="trash" color={'white'} size={30} />
+                  </TouchableOpacity>
+                </View>
+              );
+            }}
           />
 
           <View style={styles.operationsContainer}>

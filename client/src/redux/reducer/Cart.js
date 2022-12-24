@@ -20,18 +20,24 @@ const cartSlice = createSlice({
     removeFromCart: removeFromCartAction,
     adjustQuantity: (state, actions) => {
       const {isIncrease, product_id, itemQuantity, user_id} = actions.payload;
+
       let itemCart = state.item_cart?.find(
-        item => item.product_id === product_id,
+        item => item.product_id._id === product_id.product_id._id,
       );
 
       if (isIncrease) itemCart.quantity += itemQuantity;
       else itemCart.quantity -= itemQuantity;
-
+      
       api
-        .put(`/cart/${product_id}/${user_id}`, {quantity: itemCart.quantity})
+        .put(`/cart/${product_id.product_id._id}/${user_id}`, {
+          quantity: itemCart.quantity,
+        })
         .then(() => {
           console.log('Product quantity updated');
         });
+    },
+    clear_cart: (state, action) =>{
+      state.item_cart = [];
     },
     cart_fetchFailed: (state, action) =>{
       state.doneGetCart = true;
@@ -46,24 +52,19 @@ const cartSlice = createSlice({
       const cartData = actions.payload.carts;
       let sort = [];
 
-      for (let i = 0; i < cartData.length; i++) {
-        sort.push({
-          cart_id: cartData[i]._id,
-          product_id: cartData[i].product_id._id,
-          name: cartData[i].product_id.name,
-          price: cartData[i].product_id.price,
-          quantity: cartData[i].quantity,
-          quantity_stock: cartData[i].product_id.quantity_stock,
-        });
-      }
-
       state.doneGetCart = true;
-      state.item_cart = [...sort];
+      state.item_cart = [...cartData];
     });
   },
 });
 
-export const { addToCart, removeFromCart, adjustQuantity, cart_fetchFailed } = cartSlice.actions;
+export const {
+  addToCart,
+  removeFromCart,
+  adjustQuantity,
+  cart_fetchFailed,
+  clear_cart,
+} = cartSlice.actions;
 export const cartData = (state) => state.cart.item_cart;
 export const FetchCartStatus = (state) => state.cart.doneGetCart;
 export default cartSlice.reducer;

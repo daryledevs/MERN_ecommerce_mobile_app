@@ -1,13 +1,13 @@
 import { StyleSheet, Text, View, Pressable } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { UserDetails, UserAddress } from '../../redux/reducer/User';
+import { useDispatch, useSelector } from 'react-redux';
+import { UserDetails, UserAddress, edit_profile } from '../../redux/reducer/User';
 import AddressFillUpModal from '../../shared/modal/AddressFillUpModal';
 import Icon from 'react-native-vector-icons/AntDesign';
 import api from '../../asset/api';
 
 const Shipping = () => {
-
+  const dispatch = useDispatch();
   const user_details = useSelector(UserDetails);
   const user_address = useSelector(UserAddress);
   const [showAddressModal, setShowAddressModal] = useState(false);
@@ -18,6 +18,7 @@ const Shipping = () => {
       address_id: defaultAddress,
     })
     .then(() => {
+      dispatch(edit_profile({ address_id: defaultAddress }))
       console.log("Changed default address");
     })
     .catch((error) => {
