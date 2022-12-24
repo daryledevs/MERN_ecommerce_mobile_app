@@ -7,19 +7,21 @@ const initialState = {
 };
 
 const orderSlice = createSlice({
-  name: "order",
+  name: 'order',
   initialState,
-  reducers:{
-  
+  reducers: {
+    order_fetchFailed: (state, action) =>{
+      state.doneGetOrder = true;
+    }
   },
-  extraReducers(builder){
+  extraReducers(builder) {
     builder.addCase(get_all_orders.pending, (state, action) => {
       state.doneGetOrder = false;
     });
 
     builder.addCase(get_all_orders.fulfilled, (state, action) => {
-      console.log("ORDER ITEMS: ", action.payload);
-      return { ordered_items: action.payload, doneGetOrder: true };
+      console.log('ORDER ITEMS: ', action.payload);
+      return {ordered_items: action.payload, doneGetOrder: true};
     });
 
     builder.addCase(get_all_orders.rejected, (state, action) => {
@@ -30,9 +32,10 @@ const orderSlice = createSlice({
       console.log('New order', action.payload);
       state.ordered_items.push(action.payload);
     });
-  }
+  },
 });
 
 export const OrderItems = (state) => state.order.ordered_items;
 export const FetchOrderStatus = (state) => state.order.doneGetOrder;
+export const { order_fetchFailed } = orderSlice.actions;
 export default orderSlice.reducer;

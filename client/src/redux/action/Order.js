@@ -1,5 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../asset/api";
+import { clear_cart } from "../reducer/Cart";
 
 export const get_all_orders = createAsyncThunk(
   'order/get_all_orders',
@@ -15,14 +16,14 @@ export const get_all_orders = createAsyncThunk(
 
 export const create_orders = createAsyncThunk(
   'order/create_orders',
-  async (_, { fulfillWithValue, rejectWithValue, getState }) => {
+  async (_, { fulfillWithValue, rejectWithValue, getState, dispatch }) => {
     const user_cart = getState().cart.item_cart;
     const userData = getState().user;
     const extracted_data = [];
 
     for (let i = 0; i < user_cart.length; i++) {
       extracted_data.push({
-        product_id: user_cart[i].product_id,
+        product: user_cart[i].product_id,
         quantity: user_cart[i].quantity,
       });
     }
@@ -35,6 +36,7 @@ export const create_orders = createAsyncThunk(
         payment_method: 'Card',
       })
       .then(res => {
+        dispatch(clear_cart());
         return res.data;
       })
       .catch(error => {
