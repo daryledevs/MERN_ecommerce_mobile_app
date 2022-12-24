@@ -32,7 +32,9 @@ import {
 import ErrorModal from '../shared/modal/ErrorModal';
 import { FetchWishlistStatus, wishlist_fetchFailed } from '../redux/reducer/Wishlist';
 import { ShowRoute } from '../redux/reducer/RouteNavigation';
-import { FetchOrderStatus } from '../redux/reducer/Order';
+import { FetchOrderStatus, order_fetchFailed } from '../redux/reducer/Order';
+import ProfileNavigator from './ProfileNavigator';
+import { get_current_page } from '../redux/reducer/RouteNavigation';
 
 const Tab = createBottomTabNavigator();
 
@@ -55,38 +57,39 @@ const MainNavigation = () => {
   const fetchCartStatus = useSelector(FetchCartStatus);
   const fetchOrderStatus = useSelector(FetchOrderStatus);
 
-  useEffect(() => {
-    BackHandler.addEventListener('hardwareBackPress', () => {
-      Alert.alert(
-        'Exit App',
-        'Do you want to exit?',
-        [
-          {
-            text: 'No',
-            onPress: () => console.log('Cancel Pressed'),
-            style: 'cancel',
-          },
-          {
-            text: 'Yes',
-            onPress: () => {
-              BackHandler.exitApp();
-            },
-          },
-        ],
-        {cancelable: false},
-      );
-      return true;
-    });
-    return () => {
-      BackHandler.removeEventListener();
-    };
-  }, []);
+  // useEffect(() => {
+  //   BackHandler.addEventListener('hardwareBackPress', () => {
+  //     Alert.alert(
+  //       'Exit App',
+  //       'Do you want to exit?',
+  //       [
+  //         {
+  //           text: 'No',
+  //           onPress: () => console.log('Cancel Pressed'),
+  //           style: 'cancel',
+  //         },
+  //         {
+  //           text: 'Yes',
+  //           onPress: () => {
+  //             BackHandler.exitApp();
+  //           },
+  //         },
+  //       ],
+  //       {cancelable: false},
+  //     );
+  //     return true;
+  //   });
+  //   return () => {
+  //     BackHandler.removeEventListener();
+  //   };
+  // }, []);
 
 
   function fetchFailed(){
     dispatch(product_fetchFailed());
     dispatch(wishlist_fetchFailed());
     dispatch(cart_fetchFailed());
+    dispatch(order_fetchFailed());
   }
 
   useEffect(() => {
@@ -111,6 +114,7 @@ const MainNavigation = () => {
           if (token) return dispatch(getUserInfoByToken(token));
           else {
             fetchFailed();
+            dispatch(tokenIsNull())
             setTimeout(() => dispatch(tokenIsNull()), 3000);
           }
         })
@@ -154,6 +158,15 @@ const MainNavigation = () => {
         <>
           <Tab.Navigator
             initialRouteName="Home"
+            screenListeners={({navigation, route}) => {
+              // it would be better to console log the route to understand how it works
+              // I didn't used the GetCurrentPage from util due to hooks error 
+
+              // if not undefined, then off the bottom tabs
+              if(route?.state?.routes[1]?.name) dispatch(get_current_page(true));
+              // if the value is undefined, then put back
+              else dispatch(get_current_page(false)); 
+            }}
             screenOptions={{
               showLabel: false,
               activeTinColor: '#e91e63',
@@ -212,7 +225,7 @@ const MainNavigation = () => {
             />
             <Tab.Screen
               name="Me"
-              component={UserProfile}
+              component={ProfileNavigator}
               options={{
                 tabBarIcon: ({color}) => (
                   <Icon

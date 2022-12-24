@@ -3,7 +3,6 @@ import { StyleSheet, Text, View, Image, Pressable, ScrollView } from 'react-nati
 import placeholder from '../../asset/image/placeholder.png';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from '../../redux/reducer/Cart';
-import GetCurrentPage from '../../util/GetCurrentPage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import api from '../../asset/api';
 import { UserDetails } from '../../redux/reducer/User';
@@ -34,8 +33,6 @@ const ProductDetail = ({ route }) => {
   });
 
   const timesToIterate = [1, 2, 3, 4, 5];
-
-  GetCurrentPage('Homepage');
   
   useEffect(() => {
     api.get(`/likes/status/${product._id}/${userData._id}`)
