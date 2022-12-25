@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import api from "../../asset/api";
 import { userLogin, getUserInfoByToken, userLogoutAction } from "../action/User";
 
 const initialState = {
@@ -55,7 +56,18 @@ const userSlice = createSlice({
       state.user_details = {
         ...state.user_details,
         ...action.payload
-      }
+      };
+
+      api
+        .put(`/users/edit-profile/${state.user_details._id}`, {
+          ...action.payload,
+        })
+        .then(() => {
+          console.log('Edit successfully!');
+        })
+        .catch((error) =>{
+          console.log(error.response.data)
+        })
     },
   },
   extraReducers(builder) {
