@@ -73,6 +73,13 @@ const CartCheckout = () => {
 
     initialized();
     initializePaymentSheet();
+
+    return () =>{
+      // cleanup / unmount
+      setFetchPublishableKey(null);
+      setFetchPubKeyDone(false);
+      setLoading(false);
+    };
   }, []);
 
   const openPaymentSheet = async () => {
