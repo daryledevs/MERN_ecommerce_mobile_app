@@ -25,6 +25,7 @@
     "formik": "^2.2.9",
     "react": "17.0.2",
     "react-native": "0.68.5",
+    "react-native-date-picker": "^4.2.6",
     "react-native-gesture-handler": "^2.7.1",
     "react-native-image-crop-picker": "^0.39.0",
     "react-native-pager-view": "^6.0.1",
