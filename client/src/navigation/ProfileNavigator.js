@@ -15,6 +15,10 @@ const ProfileNavigator = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen
+        options={{
+          headerShown: false,
+          title: 'Edit Profile',
+        }}
         name="UserProfile"
         component={UserProfile}
       />
@@ -23,7 +27,7 @@ const ProfileNavigator = () => {
         name="UserDetail"
         options={{
           headerShown: true,
-          title: "Edit Profile"
+          title: 'Edit Profile',
         }}
         component={UserDetail}
       />
