@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, Platform, BackHandler, Alert } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+} from 'react-native';
 // packages
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Icon_2 from 'react-native-vector-icons/AntDesign';
@@ -56,34 +60,6 @@ const MainNavigation = () => {
   const fetchWishlistStatus = useSelector(FetchWishlistStatus);
   const fetchCartStatus = useSelector(FetchCartStatus);
   const fetchOrderStatus = useSelector(FetchOrderStatus);
-
-  // useEffect(() => {
-  //   BackHandler.addEventListener('hardwareBackPress', () => {
-  //     Alert.alert(
-  //       'Exit App',
-  //       'Do you want to exit?',
-  //       [
-  //         {
-  //           text: 'No',
-  //           onPress: () => console.log('Cancel Pressed'),
-  //           style: 'cancel',
-  //         },
-  //         {
-  //           text: 'Yes',
-  //           onPress: () => {
-  //             BackHandler.exitApp();
-  //           },
-  //         },
-  //       ],
-  //       {cancelable: false},
-  //     );
-  //     return true;
-  //   });
-  //   return () => {
-  //     BackHandler.removeEventListener();
-  //   };
-  // }, []);
-
 
   function fetchFailed(){
     dispatch(product_fetchFailed());

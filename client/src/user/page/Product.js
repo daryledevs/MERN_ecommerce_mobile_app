@@ -7,9 +7,14 @@ import {
   TouchableOpacity,
   Image,
   FlatList,
+  BackHandler,
+  Alert,
 } from 'react-native';
 import { ScrollView, TextInput, } from 'react-native-gesture-handler';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import {
+  useFocusEffect,
+} from '@react-navigation/native';
 // asset
 import FilterIcon from '../../asset/image/filter-v1.png';
 // component
@@ -38,6 +43,39 @@ const Product = () => {
   const productData = useSelector(productState);
   const categoryData = useSelector(categoryState);
 
+
+  function PromptExit() {
+   Alert.alert(
+     'Exit App',
+     'Do you want to exit?',
+     [
+       {
+         text: 'No',
+         onPress: () => console.log('Cancel Pressed'),
+         style: 'cancel',
+       },
+       {
+         text: 'Yes',
+         onPress: () => {
+           BackHandler.exitApp();
+         },
+       },
+     ],
+     {cancelable: false},
+   );
+
+   return true;
+  }
+
+  useFocusEffect(
+    useCallback(() => {
+      BackHandler.addEventListener('hardwareBackPress', PromptExit);
+      return () => {
+        BackHandler.removeEventListener('hardwareBackPress', PromptExit);
+      };
+    }, []),
+  );
+
   useEffect(() => {
     setProducts(productData);
     setBasedData(productData);
@@ -46,7 +84,7 @@ const Product = () => {
 
   useEffect(() => {
     const filter = basedData.filter(product =>
-      product.product.name
+      product.product_details.name
         .toLowerCase()
         .replace(' ', '')
         .includes(search.toLowerCase().replace(' ', '')),
@@ -110,7 +148,7 @@ const Product = () => {
 
     const relatedCategory = basedData.filter(product =>
       chosenCategory.current.some(
-        ({categoryId}) => categoryId === product.product.category._id,
+        ({categoryId}) => categoryId === product.product_details.category._id,
       ),
     );
 
@@ -133,9 +171,7 @@ const Product = () => {
               keyExtractor={item => '_' + item._id}
               renderItem={({item}) => (
                 <TouchableOpacity
-                  onPress={() =>
-                    categoryItem(item.name, item._id)
-                  }
+                  onPress={() => categoryItem(item.name, item._id)}
                   style={{borderWidth: 1, marginBottom: 5}}>
                   <Text>{item.name}</Text>
                 </TouchableOpacity>
@@ -158,7 +194,10 @@ const Product = () => {
           </View>
         ) : (
           searchProduct.map(products => (
-            <SearchedProducts key={products.product._id + "_"} item={products} />
+            <SearchedProducts
+              key={products.product_details._id + '_'}
+              item={products}
+            />
           ))
         )}
       </View>
@@ -216,11 +255,12 @@ const Product = () => {
               style={{
                 flexDirection: 'row',
                 flexWrap: 'wrap',
+                justifyContent: 'space-evenly',
               }}>
               {products.map(product => (
                 <ProductCard
-                  key={product.product._id}
-                  product={product.product}
+                  key={product.product_details._id}
+                  product={product}
                 />
               ))}
             </View>
@@ -229,7 +269,7 @@ const Product = () => {
       )}
     </ScrollView>
   );
-};
+};;
 
 export default Product;
 
